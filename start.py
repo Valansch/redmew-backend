@@ -15,29 +15,16 @@ def handler_stop_signal(signum, frame):
 #signal.signal(signal.SIGINT, handler_stop_signal)
 signal.signal(signal.SIGTERM, handler_stop_signal)
 
-def update_users():
-	mods     = "/home/factorio/server/script-output/mods.lua"
-	regulars = "/home/factorio/server/script-output/regulars.lua"
-
-	time.sleep(30)
-
-	print("Updating users...")
-
-	mods_list = ""
-	regulars_list = ""
-	with open(mods, 'r') as myfile:
-	    mods_list=myfile.read().replace('\n', ' ')
-	with open(regulars, 'r') as myfile:
-	    regulars_list=myfile.read().replace('\n', ' ')
-
-	command = "tmux send-keys -t console".split()
-	command.append("/silent-command global.mods = ")
-	command.append(mods_list)
-	command.append("Enter")
-	Popen(command)
-	command[len(command) - 3] = "/silent-command global.regulars = "
-	command[len(command) - 2] = regulars_list
-	Popen(command)
+def get_update_users_command():
+	regulars	= "/home/factorio/server/script-output/regulars.lua"
+	mods	= "/home/factorio/server/script-output/mods.lua"
+	print("Updating users.")
+	cmd = " global.regulars = "
+	with open(regulars, 'r') as f:
+		cmd = cmd + f.read().replace('\n', ' ')
+	with open(mods, 'r') as f:
+		cmd = f.read().replace('\n', ' ') + cmd
+	return "/silent-command global.mods = " + cmd
 
 def get_command():
 	if os.path.isfile(command_pipe):
@@ -72,10 +59,12 @@ def restart():
 def start():
 	print("Starting server.")
 	with Popen(cmd + " >> /home/factorio/server/log/diffiebananya04live.log", shell=True, stdin=PIPE, bufsize=1, universal_newlines=True) as shell:
-		for x in range(1000):
+		for x in range(100000000):
+			#Check for input every 0.1 sec
 			if select.select([sys.stdin], [], [], 0.1)[0]:
 				line = sys.stdin.readline()
 				print(line, file=shell.stdin, flush=True)
+			#Check for command every 2 sec
 			if x % 20 == 0:
 				command = get_command()
 				if command == "stop":
@@ -83,6 +72,10 @@ def start():
 					stopped()
 				elif command == "restart":
 					restart()
+			#Update users after 30 sec
+			if x == 50:
+				line = get_update_users_command()
+				print(line, file=shell.stdin, flush=True)
 try:
 	start()
 except KeyboardInterrupt:
