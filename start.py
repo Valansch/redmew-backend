@@ -5,10 +5,14 @@ import signal
 import sys
 import os
 
-print(os.getpid())
+f = open("/home/factorio/server/pid",'w')
+f.write(str(os.getpid()))
+f.close()
+command_pipe = "/home/factorio/server/command"
+
 def handler_stop_signal(signum, frame):
-	print("Test")
-	raise KeyboardInterrupt
+	cmd = "killall -s " + str(signum) + " factorio"
+	run(cmd, shell=True)
 signal.signal(signal.SIGINT, handler_stop_signal)
 signal.signal(signal.SIGTERM, handler_stop_signal)
 
@@ -36,14 +40,25 @@ def update_users():
 	command[len(command) - 2] = regulars_list
 	Popen(command)
 
+def get_command():
+
 
 cmd = "/home/factorio/server/bin/x64/factorio --server-settings /home/factorio/server/server-settings.json --start-server /home/factorio/server/saves/_autosave1.zip --console-log /home/factorio/server/log/diffiebananya03.log"
 
 #update_users()
 
-print("Starting server.")
-try:
-	run(cmd + " >> /home/factorio/server/log/diffiebananya04live.log", shell=True, stdin=sys.stdin)
-except KeyboardInterrupt:
-	print("Server stopped by Keyboard Interrupt")
+def start_server():
+	try:
+		print("Starting server.")
+		p = Popen(cmd + " >> /home/factorio/server/log/diffiebananya04live.log", shell=True, stdin=PIPE)
+	except KeyboardInterrupt:
+		print("Server stopped by Keyboard Interrupt")
 
+start_server()
+
+while True:
+	time.sleep(1)
+	command = ""
+	with open(command_pipe) as f:
+		command = f.readlines()
+	print(command)
