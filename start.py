@@ -4,16 +4,15 @@ import time
 import signal
 import sys
 import os
+import select
 
-f = open("/home/factorio/server/pid",'w')
-f.write(str(os.getpid()))
-f.close()
-command_pipe = "/home/factorio/server/command"
+command_pipe = "/tmp/command_pipeline"
+status = "stopped"
 
 def handler_stop_signal(signum, frame):
 	cmd = "killall -s " + str(signum) + " factorio"
 	run(cmd, shell=True)
-signal.signal(signal.SIGINT, handler_stop_signal)
+#signal.signal(signal.SIGINT, handler_stop_signal)
 signal.signal(signal.SIGTERM, handler_stop_signal)
 
 def update_users():
@@ -41,24 +40,50 @@ def update_users():
 	Popen(command)
 
 def get_command():
-
+	if os.path.isfile(command_pipe):
+		line = ""
+		with open(command_pipe) as f:
+			line = f.readline().rstrip(" ").rstrip("\n")
+		os.remove(command_pipe)
+		return line
+	else:
+		return ""
 
 cmd = "/home/factorio/server/bin/x64/factorio --server-settings /home/factorio/server/server-settings.json --start-server /home/factorio/server/saves/_autosave1.zip --console-log /home/factorio/server/log/diffiebananya03.log"
 
-#update_users()
+def stop():
+	print("Stopping server.")
+	run("killall factorio", shell=True)
 
-def start_server():
-	try:
-		print("Starting server.")
-		p = Popen(cmd + " >> /home/factorio/server/log/diffiebananya04live.log", shell=True, stdin=PIPE)
-	except KeyboardInterrupt:
-		print("Server stopped by Keyboard Interrupt")
+def stopped():
+	for x in range(1000000):
+		time.sleep(2)
+		command = get_command()
+		if command == "start":
+			start()
+			sys.exit()
 
-start_server()
+def restart():
+	stop()
+	time.sleep(5)
+	start()
+	sys.exit()
 
-while True:
-	time.sleep(1)
-	command = ""
-	with open(command_pipe) as f:
-		command = f.readlines()
-	print(command)
+def start():
+	print("Starting server.")
+	with Popen(cmd + " >> /home/factorio/server/log/diffiebananya04live.log", shell=True, stdin=PIPE, bufsize=1, universal_newlines=True) as shell:
+		for x in range(1000):
+			if select.select([sys.stdin], [], [], 0.1)[0]:
+				line = sys.stdin.readline()
+				print(line, file=shell.stdin, flush=True)
+			if x % 20 == 0:
+				command = get_command()
+				if command == "stop":
+					stop()
+					stopped()
+				elif command == "restart":
+					restart()
+try:
+	start()
+except KeyboardInterrupt:
+	sys.exit(0)
