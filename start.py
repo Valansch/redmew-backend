@@ -6,11 +6,13 @@ import sys
 import os
 import select
 
-command_pipe = "/tmp/command_pipeline"
-cwd = dir_path = os.path.dirname(os.path.abspath(__file__))
-
+cwd = os.path.dirname(os.path.abspath(__file__))
+command_pipe = "/tmp/command_pipeline" + cwd + "/pipe"
+print(cwd)
+pid = 0
 def handler_stop_signal(signum, frame):
-	cmd = "killall -s " + str(signum) + " factorio"
+	global pid
+	cmd = "kill -s " + str(signum) + " " + str(pid)
 	run(cmd, shell=True)
 	sys.exit(0)
 signal.signal(signal.SIGINT, handler_stop_signal)
@@ -41,9 +43,18 @@ def get_command():
 
 cmd = cwd + "/bin/x64/factorio --server-settings " + cwd + "/server-settings.json --start-server " + cwd +"/saves/_autosave1.zip --console-log " + cwd + "/log/diffiebananya03.log"
 
+def pid_exists(pid):
+	try:
+		os.kill(pid, 0) # PermissionError is deliberatly not caught, because if we get that then something is wrong
+	except ProcessLookupError: # errno.ESRCH
+		return False # No such process
+	return True # no error, we can send a signal to the process
+
 def stop():
-	print("Stopping server.")
-	run("killall factorio", shell=True)
+	global pid
+	if pid_exists(pid):
+		print("Stopping server.")
+		run("kill " + str(pid), shell=True)
 
 def stopped():
 	for x in range(1000000):
@@ -54,23 +65,23 @@ def stopped():
 			sys.exit()
 
 def restart():
-	print("Stopping server", end="")
-	run("killall factorio", shell=True)
+	global pid
+	stop()
 	#wait up to 20 sec before starting again
-	for x in range(20):
+	for x in range(10000000):
 		time.sleep(1)
-		pid = run("ps -A | grep factorio | awk '{print $1}'", shell=True, stdout=PIPE).stdout.decode('utf-8')
-		if pid == "":
-			break
-		print('.', end='', flush=True)
+		if not pid_exists(pid): break
+		if x > 0: print('.', end='', flush=True)
 	print("")
 	start()
-	sys.exit()
+	sys.exit(0)
 
 def start():
 	global cwd
+	global pid
 	print("Starting server.")
 	with Popen(cmd + " >> " + cwd + "/log/diffiebananya04live.log", shell=True, stdin=PIPE, bufsize=1, universal_newlines=True) as shell:
+		pid = shell.pid + 1
 		for x in range(100000000):
 			#Check for input every 0.1 sec
 			if select.select([sys.stdin], [], [], 0.1)[0]:
