@@ -7,6 +7,7 @@ import os
 import select
 
 command_pipe = "/tmp/command_pipeline"
+cwd = dir_path = os.path.dirname(os.path.abspath(__file__))
 
 def handler_stop_signal(signum, frame):
 	cmd = "killall -s " + str(signum) + " factorio"
@@ -15,9 +16,11 @@ def handler_stop_signal(signum, frame):
 signal.signal(signal.SIGINT, handler_stop_signal)
 signal.signal(signal.SIGTERM, handler_stop_signal)
 
+
 def get_update_users_command():
-	regulars	= "/home/factorio/server/script-output/regulars.lua"
-	mods	= "/home/factorio/server/script-output/mods.lua"
+	global cwd
+	regulars	= cwd + "/script-output/regulars.lua"
+	mods	= cwd + "/script-output/mods.lua"
 	print("Updating users.")
 	cmd = " global.regulars = "
 	with open(regulars, 'r') as f:
@@ -36,7 +39,7 @@ def get_command():
 	else:
 		return ""
 
-cmd = "/home/factorio/server/bin/x64/factorio --server-settings /home/factorio/server/server-settings.json --start-server /home/factorio/server/saves/_autosave1.zip --console-log /home/factorio/server/log/diffiebananya03.log"
+cmd = cwd + "/bin/x64/factorio --server-settings " + cwd + "/server-settings.json --start-server " + cwd +"/saves/_autosave1.zip --console-log " + cwd + "/log/diffiebananya03.log"
 
 def stop():
 	print("Stopping server.")
@@ -65,8 +68,9 @@ def restart():
 	sys.exit()
 
 def start():
+	global cwd
 	print("Starting server.")
-	with Popen(cmd + " >> /home/factorio/server/log/diffiebananya04live.log", shell=True, stdin=PIPE, bufsize=1, universal_newlines=True) as shell:
+	with Popen(cmd + " >> " + cwd + "/log/diffiebananya04live.log", shell=True, stdin=PIPE, bufsize=1, universal_newlines=True) as shell:
 		for x in range(100000000):
 			#Check for input every 0.1 sec
 			if select.select([sys.stdin], [], [], 0.1)[0]:
