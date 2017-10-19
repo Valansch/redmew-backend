@@ -1,5 +1,5 @@
 #!/usr/bin/python
-from subprocess import Popen, run, PIPE, STDOUT
+from subprocess import Popen, run, PIPE
 import time
 import signal
 import sys
@@ -7,12 +7,12 @@ import os
 import select
 
 command_pipe = "/tmp/command_pipeline"
-status = "stopped"
 
 def handler_stop_signal(signum, frame):
 	cmd = "killall -s " + str(signum) + " factorio"
 	run(cmd, shell=True)
-#signal.signal(signal.SIGINT, handler_stop_signal)
+	sys.exit(0)
+signal.signal(signal.SIGINT, handler_stop_signal)
 signal.signal(signal.SIGTERM, handler_stop_signal)
 
 def get_update_users_command():
@@ -51,8 +51,16 @@ def stopped():
 			sys.exit()
 
 def restart():
-	stop()
-	time.sleep(5)
+	print("Stopping server", end="")
+	run("killall factorio", shell=True)
+	#wait up to 20 sec before starting again
+	for x in range(20):
+		time.sleep(1)
+		pid = run("ps -A | grep factorio | awk '{print $1}'", shell=True, stdout=PIPE).stdout.decode('utf-8')
+		if pid == "":
+			break
+		print('.', end='', flush=True)
+	print("")
 	start()
 	sys.exit()
 
@@ -73,7 +81,7 @@ def start():
 				elif command == "restart":
 					restart()
 			#Update users after 30 sec
-			if x == 50:
+			if x == 300:
 				line = get_update_users_command()
 				print(line, file=shell.stdin, flush=True)
 try:
