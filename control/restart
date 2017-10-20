@@ -1,0 +1,5 @@
+cd $( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )
+cd ..
+DIR="/tmp/command_pipeline"$PWD"/pipe"
+mkdir -p "/tmp/command_pipeline"$PWD
+echo restart > $DIR
