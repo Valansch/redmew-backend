@@ -8,7 +8,6 @@ import select
 
 cwd = os.path.dirname(os.path.abspath(__file__))
 command_pipe = "/tmp/command_pipeline" + cwd + "/pipe"
-print(cwd)
 pid = 0
 def handler_stop_signal(signum, frame):
 	global pid
