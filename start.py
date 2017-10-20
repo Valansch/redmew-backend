@@ -40,7 +40,7 @@ def get_command():
 	else:
 		return ""
 
-cmd = cwd + "/bin/x64/factorio --server-settings " + cwd + "/server-settings.json --start-server " + cwd +"/saves/_autosave1.zip --console-log " + cwd + "/log/diffiebananya03.log"
+cmd = cwd + "/bin/x64/factorio --server-settings " + cwd + "/server-settings.json --start-server " + cwd + "/saves/_autosave1.zip --console-log " + cwd + "/log/diffiebananya03.log --bind 5.9.164.209"
 
 def pid_exists(pid):
 	try:
