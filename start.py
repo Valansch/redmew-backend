@@ -49,6 +49,10 @@ def pid_exists(pid):
 	except ProcessLookupError: # errno.ESRCH
 		return False # No such process
 	return True # no error, we can send a signal to the process
+def update():
+	global cwd
+	print("Updating.")
+	run(cwd + "/update.sh", shell=True)
 
 def stop():
 	global pid
@@ -62,7 +66,9 @@ def stopped():
 		command = get_command()
 		if command == "start":
 			start()
-			sys.exit()
+			sys.exit(0)
+		elif command == "update":
+			update()
 
 def restart():
 	global pid
@@ -95,6 +101,10 @@ def start():
 					stopped()
 				elif command == "restart":
 					restart()
+				elif command == "update":
+					stop()
+					update()
+					start()
 			#Update users after 30 sec
 			if x == 300:
 				line = get_update_users_command()
@@ -103,3 +113,4 @@ try:
 	start()
 except KeyboardInterrupt:
 	sys.exit(0)
+
