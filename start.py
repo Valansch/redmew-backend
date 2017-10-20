@@ -9,6 +9,7 @@ import select
 cwd = os.path.dirname(os.path.abspath(__file__))
 command_pipe = "/tmp/command_pipeline" + cwd + "/pipe"
 pid = 0
+
 def handler_stop_signal(signum, frame):
 	global pid
 	cmd = "kill -s " + str(signum) + " " + str(pid)
@@ -30,80 +31,97 @@ def get_update_users_command():
 		cmd = f.read().replace('\n', ' ') + cmd
 	return "/silent-command global.mods = " + cmd
 
-def get_command():
+def get_external_command():
 	if os.path.isfile(command_pipe):
 		line = ""
 		with open(command_pipe) as f:
 			line = f.readline().rstrip(" ").rstrip("\n")
 		os.remove(command_pipe)
+		print("Received external command " + line)
 		return line
 	else:
 		return ""
 
 cmd = cwd + "/bin/x64/factorio --server-settings " + cwd + "/server-settings.json --start-server " + cwd + "/saves/_autosave1.zip --console-log " + cwd + "/log/diffiebananya03.log --bind 5.9.164.209"
 
-def pid_exists(pid):
+def is_stopped():
+	global pid
 	try:
 		os.kill(pid, 0) # PermissionError is deliberatly not caught, because if we get that then something is wrong
 	except ProcessLookupError: # errno.ESRCH
-		return False # No such process
-	return True # no error, we can send a signal to the process
+		return True # No such process
+	return False # no error, we can send a signal to the process
+
 def update():
 	global cwd
-	print("Updating.")
+	print("Updating")
 	run(cwd + "/update.sh", shell=True)
 
 def stop():
-	global pid
-	if pid_exists(pid):
-		print("Stopping server.")
+	if not is_stopped():
+		print("Stopping server")
 		run("kill " + str(pid), shell=True)
 
-def stopped():
+def change_state_stopped():
 	for x in range(1000000):
-		time.sleep(2)
-		command = get_command()
-		if command == "start":
-			start()
-			sys.exit(0)
-		elif command == "update":
-			update()
+		#Check for input every 0.1 sec
+		if select.select([sys.stdin], [], [], 0.1)[0]:
+			line = sys.stdin.readline()
+			if len(line) > 0 and line[0] == ":":
+				parse_and_execute(line[1:])
+		if x % 20 == 0:
+			command = get_external_command()
+			parse_and_execute(command)
 
 def restart():
-	global pid
 	stop()
 	#wait up to 20 sec before starting again
 	for x in range(10000000):
 		time.sleep(1)
-		if not pid_exists(pid): break
-		if x > 0: print('.', end='', flush=True)
-	print("")
+		if is_stopped(): break
 	start()
 	sys.exit(0)
 
+def parse_and_execute(command):
+	command = command.rstrip("\n")
+	if command == "":
+		pass
+	elif command == "stop":
+		if is_stopped(): print("Server is already stopped")
+		else:
+			stop()
+			change_state_stopped()
+	elif command == "start":
+		if is_stopped():
+			start()
+		else: print("Server already running")
+	elif command == "restart":
+		restart()
+	elif command == "update":
+		stop()
+		update()
+		start()
+	else:
+		print("Unknown command: " + command)
 def start():
 	global cwd
 	global pid
-	print("Starting server.")
+	print("Starting server")
 	with Popen(cmd + " >> " + cwd + "/log/diffiebananya04live.log", shell=True, stdin=PIPE, bufsize=1, universal_newlines=True) as shell:
 		pid = shell.pid + 1
 		for x in range(100000000):
 			#Check for input every 0.1 sec
 			if select.select([sys.stdin], [], [], 0.1)[0]:
 				line = sys.stdin.readline()
-				print(line, file=shell.stdin, flush=True)
+				if len(line) > 0:
+					if line[0] == ":":
+						parse_and_execute(line[1:])
+					else:
+						print(line, file=shell.stdin, flush=True)
 			#Check for command every 2 sec
 			if x % 20 == 0:
-				command = get_command()
-				if command == "stop":
-					stop()
-					stopped()
-				elif command == "restart":
-					restart()
-				elif command == "update":
-					stop()
-					update()
-					start()
+				command = get_external_command()
+				parse_and_execute(command)
 			#Update users after 30 sec
 			if x == 300:
 				line = get_update_users_command()
