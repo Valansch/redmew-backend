@@ -12,8 +12,9 @@ pid = 0
 
 def handler_stop_signal(signum, frame):
 	global pid
-	cmd = "kill -s " + str(signum) + " " + str(pid)
-	run(cmd, shell=True)
+	if not is_stopped():
+		cmd = "kill -s " + str(signum) + " " + str(pid)
+		run(cmd, shell=True)
 	sys.exit(0)
 signal.signal(signal.SIGINT, handler_stop_signal)
 signal.signal(signal.SIGTERM, handler_stop_signal)
@@ -23,7 +24,7 @@ def get_update_users_command():
 	global cwd
 	regulars	= cwd + "/script-output/regulars.lua"
 	mods	= cwd + "/script-output/mods.lua"
-	print("Updating users.")
+	print("Updating users")
 	cmd = " global.regulars = "
 	with open(regulars, 'r') as f:
 		cmd = cmd + f.read().replace('\n', ' ')
@@ -44,6 +45,7 @@ def get_external_command():
 
 cmd = cwd + "/bin/x64/factorio --server-settings " + cwd + "/server-settings.json --start-server " + cwd + "/saves/_autosave1.zip --console-log " + cwd + "/log/diffiebananya03.log --bind 5.9.164.209"
 
+
 def is_stopped():
 	global pid
 	try:
@@ -62,7 +64,12 @@ def stop():
 		print("Stopping server")
 		run("kill " + str(pid), shell=True)
 
+def update_external_status(status):
+	with open(cwd + "/status", 'w') as f:
+		f.write(status)
+
 def change_state_stopped():
+	update_external_status("stopped")
 	for x in range(1000000):
 		#Check for input every 0.1 sec
 		if select.select([sys.stdin], [], [], 0.1)[0]:
@@ -109,6 +116,7 @@ def start():
 	print("Starting server")
 	with Popen(cmd + " >> " + cwd + "/log/diffiebananya04live.log", shell=True, stdin=PIPE, bufsize=1, universal_newlines=True) as shell:
 		pid = shell.pid + 1
+		update_external_status("started")
 		for x in range(100000000):
 			#Check for input every 0.1 sec
 			if select.select([sys.stdin], [], [], 0.1)[0]:
