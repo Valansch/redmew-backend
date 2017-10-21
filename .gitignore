@@ -1,8 +1,14 @@
-#Ignore everything
-*
-
-#Except
-!.gitignore
-!*.py
-!*.sh
-!*.php
+.lock
+*.dat
+*.zip
+*.json
+*cfg
+config/
+bin/
+scenarios/
+backup/
+script-output/
+temp/
+data/
+*.log
+status
