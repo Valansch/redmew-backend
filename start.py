@@ -9,6 +9,9 @@ import select
 cwd = os.path.dirname(os.path.abspath(__file__))
 command_pipe = "/tmp/command_pipeline" + cwd + "/pipe"
 pid = 0
+live_log = cwd + "/log/live.log"
+log = cwd + "/log/log.log"
+cmd = cwd + "/bin/x64/factorio --server-settings " + cwd + "/server-settings.json --start-server " + cwd + "/saves/_autosave1.zip --console-log " + log + " --bind 5.9.164.209"
 
 def handler_stop_signal(signum, frame):
 	global pid
@@ -42,9 +45,6 @@ def get_external_command():
 		return line
 	else:
 		return ""
-
-cmd = cwd + "/bin/x64/factorio --server-settings " + cwd + "/server-settings.json --start-server " + cwd + "/saves/_autosave1.zip --console-log " + cwd + "/log/diffiebananya03.log --bind 5.9.164.209"
-
 
 def is_stopped():
 	global pid
@@ -114,7 +114,7 @@ def start():
 	global cwd
 	global pid
 	print("Starting server")
-	with Popen(cmd + " >> " + cwd + "/log/diffiebananya04live.log", shell=True, stdin=PIPE, bufsize=1, universal_newlines=True) as shell:
+	with Popen(cmd + " >> " + live_log, shell=True, stdin=PIPE, bufsize=1, universal_newlines=True) as shell:
 		pid = shell.pid + 1
 		update_external_status("started")
 		for x in range(100000000):
