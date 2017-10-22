@@ -97,7 +97,7 @@ def restart():
 	start()
 	sys.exit(0)
 
-def parse_and_execute(command):
+def parse_and_execute(command, shell):
 	command = command.rstrip("\n")
 	if command == "":
 		pass
@@ -116,6 +116,9 @@ def parse_and_execute(command):
 		stop()
 		update()
 		start()
+	elif command == "save":
+		if shell:
+			print("silent-command game.server_save()", file=shell.stdin, flush=True)
 	else:
 		print("Unknown command: " + command)
 def start():
@@ -135,7 +138,7 @@ def start():
 				line = sys.stdin.readline()
 				if len(line) > 0:
 					if line[0] == ":":
-						parse_and_execute(line[1:])
+						parse_and_execute(line[1:], shell)
 					else:
 						print(line, file=shell.stdin, flush=True)
 			#external cmd
@@ -143,7 +146,7 @@ def start():
 				(data, _) = mySocket.recvfrom(16384)
 				line = data.decode('UTF-8')
 				if line[0] == ":":
-					parse_and_execute(line[1:])
+					parse_and_execute(line[1:], shell)
 				else:
 					print(line, file=shell.stdin, flush=True)
 			#Update users after 20 sec
