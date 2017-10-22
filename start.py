@@ -30,7 +30,6 @@ with open(cwd + "/control_port", 'w') as f:
 
 def handler_stop_signal(signum, frame):
 	global pid
-	global p
 	if not is_stopped():
 		cmd = "kill -s " + str(signum) + " " + str(pid)
 		run(cmd, shell=True)
@@ -151,8 +150,6 @@ def start():
 			if x == 100:
 				line = get_update_users_command()
 				print(line, file=shell.stdin, flush=True)
-try:
-	start()
-except KeyboardInterrupt:
-	sys.exit(0)
+
+start()
 
