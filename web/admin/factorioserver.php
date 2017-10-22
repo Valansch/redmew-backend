@@ -68,7 +68,7 @@ class FactorioServer {
    private function _sendControlSocket( $contents ) {
       $cwd = realpath(dirname(__FILE__));
 
-      $cmd = $cwd . '/send.py' . escapeshellarg ($contents) . $this->control_port;
+      $cmd = $cwd . '/send.py ' . escapeshellarg ($contents) . ' ' . $this->control_port;
       exec($cmd, $output, $return_var);
 
       return $return_var == 0;
