@@ -137,11 +137,11 @@ def start():
 					parse_and_execute(cmd)
 				else:
 					print(line, file=shell.stdin, flush=True)
-			#Update users after 30 sec
-			if x == 300:
+			#Update users after 20 sec
+			if x == 100:
 				line = get_update_users_command()
 				print(line, file=shell.stdin, flush=True)
-
+				print(line)
 try:
 	start()
 except KeyboardInterrupt:
