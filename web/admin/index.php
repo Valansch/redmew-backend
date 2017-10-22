@@ -65,10 +65,10 @@
       </dl>
       <ul>
          <li id="factorioStart"><a href="send-control.php?control=start" class="btn btn-custom btn-large btn-block">Start</a></li>
-         <li id="factorioStop"><a href="command.php?cmd=stop" class="btn btn-custom btn-large btn-block">Stop</a></li>
-         <li id="factorioRestart"><a href="command.php?cmd=restart" class="btn btn-custom btn-large btn-block">Restart</a></li>
-         <li id="factorioUpdate"><a href="command.php?cmd=update" class="btn btn-custom btn-large btn-block">Update</a></li>
-         <li id="factorioSave"><a href="command.php?cmd=save" class="btn btn-custom btn-large btn-block">Save</a></li>
+         <li id="factorioStop"><a href="send-control.php?control=stop" class="btn btn-custom btn-large btn-block">Stop</a></li>
+         <li id="factorioRestart"><a href="send-control.php?control=restart" class="btn btn-custom btn-large btn-block">Restart</a></li>
+         <li id="factorioUpdate"><a href="send-control.php?control=update" class="btn btn-custom btn-large btn-block">Update</a></li>
+         <li id="factorioSave"><a href="send-control.php?control=save" class="btn btn-custom btn-large btn-block">Save</a></li>
       </ul>
 
       <div id="help-StartTMux">

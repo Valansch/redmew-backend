@@ -8,14 +8,17 @@ import select
 
 
 cwd = os.path.dirname(os.path.abspath(__file__))
-command_pipe = "/tmp/command_pipeline" + cwd + "/pipe"
+command_pipe_dir = "/tmp/command_pipeline" + cwd
+command_pipe = command_pipe_dir + "/pipe"
 pid = 0
 live_log = cwd + "/log/live.log"
 log = cwd + "/log/log.log"
 bind_arg = " --bind 5.9.164.209"
 if (len(sys.argv) > 1 and sys.argv[1] == "-nobind"):
 	bind_arg = ""
+
 cmd = cwd + "/bin/x64/factorio --server-settings " + cwd + "/server-settings.json --start-server " + cwd + "/saves/_autosave1.zip --console-log " + log + bind_arg
+
 with open(cwd + "/control_pid", 'w') as f:
 	f.write(str(os.getpid()))
 
@@ -42,15 +45,21 @@ def get_update_users_command():
 	return "/silent-command global.mods = " + cmd
 
 def get_external_command():
+	# print("Getting external")
 	if os.path.isfile(command_pipe):
+		# print("Found file")
 		line = ""
 		with open(command_pipe) as f:
 			line = f.readline().rstrip(" ").rstrip("\n")
-		os.remove(command_pipe)
-		print("Received external command " + line)
-		return line
-	else:
-		return ""
+		# print("Read file")
+		try:
+		 	os.remove(command_pipe)
+		except:
+			print("Couldn't remove old pipe file -- Permissions issue?")
+		if not line == "":
+			print("Received external command " + line)
+			return line
+	return ""
 
 def is_stopped():
 	global pid
@@ -119,10 +128,10 @@ def parse_and_execute(command):
 def start():
 	global cwd
 	global pid
-	print("Starting server")
+	print("Starting server with info " + cmd)
 	with Popen(cmd + " >> " + live_log, shell=True, stdin=PIPE, bufsize=1, universal_newlines=True) as shell:
 		pid = shell.pid + 1
-		update_external_pid()
+		#update_external_pid()
 		for x in range(100000000):
 			#Check for input every 0.1 sec
 			if select.select([sys.stdin], [], [], 0.1)[0]:
@@ -134,13 +143,20 @@ def start():
 						print(line, file=shell.stdin, flush=True)
 			#Check for command every 2 sec
 			if x % 20 == 0:
+				#print("Checking file")
 				command = get_external_command()
 				parse_and_execute(command)
 			#Update users after 30 sec
 			if x == 300:
+				#Commented out due to the fact that it doesn't work!
 				line = get_update_users_command()
-				print(line, file=shell.stdin, flush=True)
+				#print(line, file=shell.stdin, flush=True)
 try:
+	if not os.path.isdir(command_pipe_dir):
+		os.makedirs(command_pipe_dir)
+	os.chmod(command_pipe_dir, 0o777)
+	with open(command_pipe, 'w') as f:
+		f.write("")
 	start()
 except KeyboardInterrupt:
 	sys.exit(0)

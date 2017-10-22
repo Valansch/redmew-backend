@@ -30,18 +30,26 @@ class FactorioServer {
       $this->control_status = ( $this->control_pid > 0 ) ? "Running" : "Not running";
    }
 
-   public function startServer() {
-      $cwd = $this->cwd;
-      $cmd = $cwd . "/bin/x64/factorio"
-           . " --server-setting " . $cwd . "/server-settings.json"
-           . " --start-server " . $cwd . "/saves/_autosave1.zip"
-           . " --console-log " . $cwd . $this->_log_dir . $this->_log_name
-           // . $cwd . " --bind 5.9.164.209"
-      ;
-      exec( $cmd, $output, $return_var);
+   public function serverControl($control) {
+      $this->_sendControl($control);
+   }
 
-      var_dump($output);
-      var_dump($return_var);
+   private function _sendControl( $contents ) {
+      $dir =  "/tmp/command_pipeline" . $this->cwd;
+
+      $parts = explode('/', $dir);
+      $file = "pipe";
+      $dir = '';
+      foreach($parts as $part) {
+         if ( !empty($part) ) {
+            if (!is_dir($dir .= "/$part") ) {
+               mkdir($dir);
+            }
+         }
+      }
+
+      file_put_contents("$dir/$file", $contents . "\n");
+      chmod("$dir/$file", 0777);
    }
 
 

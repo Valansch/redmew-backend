@@ -5,22 +5,20 @@
 
 $control = isset( $_GET["control"] ) ? $_GET["control"] : "";
 
-if (  ! empty( control) ) {
+if (  ! empty( $control ) ) {
 
    include("factorioserver.php");
 
    $Server = new FactorioServer();
    switch ( $control ) {
       case "update":
+         print "Non functional.";
          break;
       case "start":
-         $Server->startServer();
-         break;
       case "restart":
-         break;
       case "stop":
-         break;
       case "save":
+         $Server->serverControl( $control );
          break;
       default:
    }
