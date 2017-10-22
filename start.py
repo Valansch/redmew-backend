@@ -1,15 +1,13 @@
 #!/usr/bin/python
 from subprocess import Popen, run, PIPE
+from socket import socket, gethostbyname, AF_INET, SOCK_DGRAM
 import time
 import signal
 import sys
 import os
 import select
 
-
 cwd = os.path.dirname(os.path.abspath(__file__))
-command_pipe_dir = "/tmp/command_pipeline" + cwd
-command_pipe = command_pipe_dir + "/pipe"
 pid = 0
 live_log = cwd + "/log/live.log"
 log = cwd + "/log/log.log"
@@ -21,16 +19,18 @@ cmd = cwd + "/bin/x64/factorio --server-settings " + cwd + "/server-settings.jso
 
 with open(cwd + "/control_pid", 'w') as f:
 	f.write(str(os.getpid()))
+with open(cwd + "/control_port", 'w') as f:
+	f.write(str(os.getpid() + 32000))
 
 def handler_stop_signal(signum, frame):
 	global pid
+	global p
 	if not is_stopped():
 		cmd = "kill -s " + str(signum) + " " + str(pid)
 		run(cmd, shell=True)
 	sys.exit(0)
 signal.signal(signal.SIGINT, handler_stop_signal)
 signal.signal(signal.SIGTERM, handler_stop_signal)
-
 
 def get_update_users_command():
 	global cwd
@@ -43,23 +43,6 @@ def get_update_users_command():
 	with open(mods, 'r') as f:
 		cmd = f.read().replace('\n', ' ') + cmd
 	return "/silent-command global.mods = " + cmd
-
-def get_external_command():
-	# print("Getting external")
-	if os.path.isfile(command_pipe):
-		# print("Found file")
-		line = ""
-		with open(command_pipe) as f:
-			line = f.readline().rstrip(" ").rstrip("\n")
-		# print("Read file")
-		try:
-		 	os.remove(command_pipe)
-		except:
-			print("Couldn't remove old pipe file -- Permissions issue?")
-		if not line == "":
-			print("Received external command " + line)
-			return line
-	return ""
 
 def is_stopped():
 	global pid
@@ -85,19 +68,20 @@ def update_external_pid():
 		f.write(str(pid))
 
 def change_state_stopped():
+	global ext_command
 	for x in range(1000000):
 		#Check for input every 0.1 sec
 		if select.select([sys.stdin], [], [], 0.1)[0]:
 			line = sys.stdin.readline()
 			if len(line) > 0 and line[0] == ":":
 				parse_and_execute(line[1:])
-		if x % 20 == 0:
-			command = get_external_command()
-			parse_and_execute(command)
+		if not ext_command == "":
+			if ext_command[0] == ":":
+				parse_and_execute(ext_command)
+			ext_command = ""
 
 def restart():
 	stop()
-	#wait up to 20 sec before starting again
 	for x in range(10000000):
 		time.sleep(1)
 		if is_stopped(): break
@@ -128,12 +112,17 @@ def parse_and_execute(command):
 def start():
 	global cwd
 	global pid
+	port_number = os.getpid() + 32000 #i feel dirty
+	mySocket = socket( AF_INET, SOCK_DGRAM )
+	mySocket.bind(('localhost', port_number))
+
 	print("Starting server with info " + cmd)
 	with Popen(cmd + " >> " + live_log, shell=True, stdin=PIPE, bufsize=1, universal_newlines=True) as shell:
 		pid = shell.pid + 1
 		update_external_pid()
 		for x in range(100000000):
 			#Check for input every 0.1 sec
+			#stdin
 			if select.select([sys.stdin], [], [], 0.1)[0]:
 				line = sys.stdin.readline()
 				if len(line) > 0:
@@ -141,22 +130,20 @@ def start():
 						parse_and_execute(line[1:])
 					else:
 						print(line, file=shell.stdin, flush=True)
-			#Check for command every 2 sec
-			if x % 20 == 0:
-				#print("Checking file")
-				command = get_external_command()
-				parse_and_execute(command)
+			if select.select([mySocket], [], [], 0.1)[0]:
+				(data, _) = mySocket.recvfrom(16384)
+				line = data.decode('UTF-8')
+				if line[0] == ":":
+					parse_and_execute(cmd)
+				else:
+					print(line, file=shell.stdin, flush=True)
 			#Update users after 30 sec
 			if x == 300:
-				#Commented out due to the fact that it doesn't work!
 				line = get_update_users_command()
-				#print(line, file=shell.stdin, flush=True)
+				print(line, file=shell.stdin, flush=True)
+
 try:
-	if not os.path.isdir(command_pipe_dir):
-		os.makedirs(command_pipe_dir)
-	os.chmod(command_pipe_dir, 0o777)
-	with open(command_pipe, 'w') as f:
-		f.write("")
 	start()
 except KeyboardInterrupt:
 	sys.exit(0)
+
