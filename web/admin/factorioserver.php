@@ -6,6 +6,7 @@ class FactorioServer {
    public $factorio_status = "Unknown";
    public $control_pid = -1;
    public $control_status = "Unknown";
+   public $control_port = -1;
 
    private $_log_dir = "/log/";
    private $_log_name = "live.log";
@@ -21,6 +22,11 @@ class FactorioServer {
          $this->control_pid = -1;
       }
 
+      $this->control_pid = file_exists($this->cwd . "/control_port") ? file_get_contents($this->cwd . "/control_port") : -1;
+      if ( ! is_numeric( $this->control_port ) ) {
+         $this->control_port = -1;
+      }
+
       $this->factorio_pid = file_exists($this->cwd . "/factorio_pid") ? file_get_contents($this->cwd . "/factorio_pid") : -1;
       if ( ! is_numeric( $this->factorio_pid ) || ! posix_getpgid ($this->factorio_pid) ) {
          $this->factorio_pid = -1;
@@ -31,10 +37,17 @@ class FactorioServer {
    }
 
    public function serverControl($control) {
-      $this->_sendControl($control);
+      $this->_sendControl(":" . $control);
    }
 
    private function _sendControl( $contents ) {
+      $this->_sendControlSocket( $contents );
+   }
+
+   /**
+     * THe old function that uses the tmp directory for cross process communication
+     */
+   private function _sendControlPipe( $contents ) {
       $dir =  "/tmp/command_pipeline" . $this->cwd;
 
       $parts = explode('/', $dir);
@@ -52,6 +65,19 @@ class FactorioServer {
       chmod("$dir/$file", 0777);
    }
 
+   private function _sendControlSocket( $contents ) {
+      $cwd = realpath(dirname(__FILE__));
+
+      $cmd = $cwd . '/send.py' . escapeshellarg ($contents) . $this->control_port;
+      exec($cmd, $output, $return_var);
+
+      return $return_var == 0;
+   }
+
+
+   public function sendCommand($command) {
+      $this->_sendControl($command);
+   }
 
    public function getLog($lines = 20) {
       $output_tmp = "/tmp/current_log_output.log";
@@ -60,15 +86,6 @@ class FactorioServer {
       exec($command);
 
       return file_get_contents( $output_tmp );
-   }
-
-   public function sendCommand( $server_command ) {
-      $command = "echo " . escapeshellarg( $server_command . "\n" ) . " > /proc/" . $this->pid . "/fd/0";
-      print $command;
-      exec( $command , $output, $return_var );
-
-      var_dump($return);
-
    }
 
    public function helpTMux() {

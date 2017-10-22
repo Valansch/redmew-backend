@@ -15,6 +15,7 @@
    $(document).ready(function () {
       reloadStatus();
       reloadConsole();
+      $("#command").focus();
 
       $("#serverControl ul a").click(function (e) {
          e.preventDefault();
@@ -26,7 +27,18 @@
          window.clearTimeout(serverControlTimeout);
          serverControlTimeout = window.setTimeout(reloadStatus, timePollControl);
 
-      })
+      });
+
+      $("form").submit(function (e) {
+         e.preventDefault();
+         command = $("#command").val();
+         $.ajax({
+           type: "POST",
+           url: $(this).attr("action"),
+           data: { command: command }
+         });
+         $("#command").val("");
+      });
    });
 
    function serverControlButtonEnable() {
@@ -57,6 +69,7 @@
 
    function init_controls() {
       $("#controlPID").html( window.server_status.control_pid );
+      $("#controlPort").html( window.server_status.control_port );
       $("#factorioPID").html( window.server_status.factorio_pid );
       $("#factorioStatus").html( window.server_status.factorio_status );
 
@@ -94,6 +107,8 @@
       <dl>
          <dt>Control PID</dt>
          <dd id="controlPID"></dd>
+         <dt>Control Port</dt>
+         <dd id="controlPort"></dd>
          <dt>Server PID</dt>
          <dd id="factorioPID"><dd>
          <dt>Server Status</dt>
@@ -125,8 +140,8 @@
       <h2>Server Console</h2>
       <div class="output"></div>
       <form method="post" action="send-command.php">
-         <input type="text" name="command-to-send" />
-         <input type="submit" />
+         <input type="text" id="command" name="command" />
+         <input type="submit" value="Send" />
       </form>
    </div>
 

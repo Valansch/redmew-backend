@@ -3,14 +3,13 @@
  * Sends commands to the server
  */
 
-$command = isset( $_POST["command-to-send"] ) ? $_POST["command-to-send"] : "";
+$command = isset( $_POST["command"] ) ? $_POST["command"] : "";
 
 if (  ! empty( $command) ) {
-
     include("factorioserver.php");
 
    $Server = new FactorioServer();
 
-   $Server->sendCommand( $command );
+   print $Server->sendCommand( $command );
 
 }
