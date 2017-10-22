@@ -17,6 +17,12 @@ if (len(sys.argv) > 1 and sys.argv[1] == "-nobind"):
 
 cmd = cwd + "/bin/x64/factorio --server-settings " + cwd + "/server-settings.json --start-server " + cwd + "/saves/_autosave1.zip --console-log " + log + bind_arg
 
+
+port_number = os.getpid() + 32000 #i feel dirty
+mySocket = socket( AF_INET, SOCK_DGRAM )
+mySocket.bind(('localhost', port_number))
+
+
 with open(cwd + "/control_pid", 'w') as f:
 	f.write(str(os.getpid()))
 with open(cwd + "/control_port", 'w') as f:
@@ -68,17 +74,21 @@ def update_external_pid():
 		f.write(str(pid))
 
 def change_state_stopped():
-	global ext_command
+	global mySocket
 	for x in range(1000000):
 		#Check for input every 0.1 sec
+		#stdin
 		if select.select([sys.stdin], [], [], 0.1)[0]:
 			line = sys.stdin.readline()
-			if len(line) > 0 and line[0] == ":":
+			if len(line) > 0:
+				if line[0] == ":":
+					parse_and_execute(line[1:])
+		#external cmd
+		if select.select([mySocket], [], [], 0.1)[0]:
+			(data, _) = mySocket.recvfrom(16384)
+			line = data.decode('UTF-8')
+			if line[0] == ":":
 				parse_and_execute(line[1:])
-		if not ext_command == "":
-			if ext_command[0] == ":":
-				parse_and_execute(ext_command)
-			ext_command = ""
 
 def restart():
 	stop()
@@ -112,9 +122,8 @@ def parse_and_execute(command):
 def start():
 	global cwd
 	global pid
-	port_number = os.getpid() + 32000 #i feel dirty
-	mySocket = socket( AF_INET, SOCK_DGRAM )
-	mySocket.bind(('localhost', port_number))
+	global cmd
+	global mySocket
 
 	print("Starting server with info " + cmd)
 	with Popen(cmd + " >> " + live_log, shell=True, stdin=PIPE, bufsize=1, universal_newlines=True) as shell:
@@ -130,18 +139,18 @@ def start():
 						parse_and_execute(line[1:])
 					else:
 						print(line, file=shell.stdin, flush=True)
+			#external cmd
 			if select.select([mySocket], [], [], 0.1)[0]:
 				(data, _) = mySocket.recvfrom(16384)
 				line = data.decode('UTF-8')
 				if line[0] == ":":
-					parse_and_execute(cmd)
+					parse_and_execute(line[1:])
 				else:
 					print(line, file=shell.stdin, flush=True)
 			#Update users after 20 sec
 			if x == 100:
 				line = get_update_users_command()
 				print(line, file=shell.stdin, flush=True)
-				print(line)
 try:
 	start()
 except KeyboardInterrupt:
