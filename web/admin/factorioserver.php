@@ -17,8 +17,7 @@ class FactorioServer {
       $factorio_bin = $this->cwd . "/bin/x64/factorio";
 
       $this->control_pid = file_get_contents($this->cwd . "/control_pid");
-      exec("ps --pid " . $this->control_pid . " -o comm=", $output, $return_var);
-      if ( strlen($output[0]) == 0) {
+      if ( ! posix_getpgid ($this->control_pid) ) {
          $this->control_pid = -1;
       }
 
