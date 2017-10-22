@@ -6,13 +6,16 @@ import sys
 import os
 import select
 
+
 cwd = os.path.dirname(os.path.abspath(__file__))
 command_pipe = "/tmp/command_pipeline" + cwd + "/pipe"
 pid = 0
 live_log = cwd + "/log/live.log"
 log = cwd + "/log/log.log"
-cmd = cwd + "/bin/x64/factorio --server-settings " + cwd + "/server-settings.json --start-server " + cwd + "/saves/_autosave1.zip --console-log " + log #+ " --bind 5.9.164.209"
-
+bind_arg = " --bind 5.9.164.209"
+if (len(sys.argv) > 1 and sys.argv[1] == "-nobind"):
+	bind_arg = ""
+cmd = cwd + "/bin/x64/factorio --server-settings " + cwd + "/server-settings.json --start-server " + cwd + "/saves/_autosave1.zip --console-log " + log + bind_arg
 with open(cwd + "/control_pid", 'w') as f:
 	f.write(str(os.getpid()))
 
@@ -67,10 +70,10 @@ def stop():
 		print("Stopping server")
 		run("kill " + str(pid), shell=True)
 
-def update_external_status():
+def update_external_pid():
 	global pid
-	with open(cwd + "/pid", 'w') as f:
-		f.write(pid)
+	with open(cwd + "/factorio_pid", 'w') as f:
+		f.write(str(pid))
 
 def change_state_stopped():
 	for x in range(1000000):
