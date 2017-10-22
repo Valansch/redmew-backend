@@ -67,12 +67,12 @@ def stop():
 		print("Stopping server")
 		run("kill " + str(pid), shell=True)
 
-def update_external_status(status):
-	with open(cwd + "/status", 'w') as f:
-		f.write(status)
+def update_external_status():
+	global pid
+	with open(cwd + "/pid", 'w') as f:
+		f.write(pid)
 
 def change_state_stopped():
-	update_external_status("stopped")
 	for x in range(1000000):
 		#Check for input every 0.1 sec
 		if select.select([sys.stdin], [], [], 0.1)[0]:
@@ -119,7 +119,7 @@ def start():
 	print("Starting server")
 	with Popen(cmd + " >> " + live_log, shell=True, stdin=PIPE, bufsize=1, universal_newlines=True) as shell:
 		pid = shell.pid + 1
-		update_external_status("started")
+		update_external_pid()
 		for x in range(100000000):
 			#Check for input every 0.1 sec
 			if select.select([sys.stdin], [], [], 0.1)[0]:
