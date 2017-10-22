@@ -41,7 +41,7 @@ xmp {
 }
 
 dl {
-   width: 350px;
+   width: 550px;
    overflow: hidden;
    padding: 0;
    margin: 0;
@@ -50,9 +50,10 @@ dl {
 dt {
    clear: both;
    float: left;
-   width: 30%;
-   padding: 0;
+   width: 25%;
+   padding: 0 1em 0 0;
    margin: 0;
+   text-align: right;
 }
 dd {
    float: left;

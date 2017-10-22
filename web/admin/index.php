@@ -69,10 +69,11 @@
    }
 
    function init_controls() {
-      $("#controlPID").html( window.server_status.control_pid );
-      $("#controlPort").html( window.server_status.control_port );
-      $("#factorioPID").html( window.server_status.factorio_pid );
-      $("#factorioStatus").html( window.server_status.factorio_status );
+      $("#controlPID").html( window.server_status.control_pid + " / " + window.server_status.control_port);
+      $("#factorioPID").html( window.server_status.factorio_pid + " / " + window.server_status.factorio_status );
+      $("#factorioName").html( window.server_status.serverSettings.name );
+      $("#factorioDescription").html( window.server_status.serverSettings.description );
+      $("#factorioTags").html( window.server_status.serverSettings.tags.join("<br />") );
 
       if ( window.server_status.control_status != "Running") {
          $("#help-StartTMux").show();
@@ -107,14 +108,16 @@
       <h2>Server Command and Control</h2>
       <p>@TODO: Player Count / List</p>
       <dl>
-         <dt>Control PID</dt>
+         <dt>Control Script</dt>
          <dd id="controlPID"></dd>
-         <dt>Control Port</dt>
-         <dd id="controlPort"></dd>
-         <dt>Server PID</dt>
+         <dt>Factorio</dt>
          <dd id="factorioPID"><dd>
-         <dt>Server Status</dt>
-         <dd id="factorioStatus"></dd>
+         <dt>Server Name</dt>
+         <dd id="factorioName"></dd>
+         <dt>Description</dt>
+         <dd id="factorioDescription"></dd>
+         <dt>Tags</dt>
+         <dd id="factorioTags"></dd>
       </dl>
       <ul>
          <li id="factorioStart"><a href="send-control.php?control=start" class="btn btn-custom btn-large btn-block">Start</a></li>
