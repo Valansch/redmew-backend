@@ -13,6 +13,9 @@ live_log = cwd + "/log/live.log"
 log = cwd + "/log/log.log"
 cmd = cwd + "/bin/x64/factorio --server-settings " + cwd + "/server-settings.json --start-server " + cwd + "/saves/_autosave1.zip --console-log " + log #+ " --bind 5.9.164.209"
 
+with open(cwd + "/control_pid", 'w') as f:
+	f.write(str(os.getpid()))
+
 def handler_stop_signal(signum, frame):
 	global pid
 	if not is_stopped():

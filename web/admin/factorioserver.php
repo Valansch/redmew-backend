@@ -15,7 +15,12 @@ class FactorioServer {
       $this->cwd = realpath( $web_cwd . "/../../");
 
       $factorio_bin = $this->cwd . "/bin/x64/factorio";
-      $control_bin = $this->cwd . "/start.py";
+
+      $this->control_pid = file_get_contents($this->cwd . "/control_pid");
+      exec("ps --pid " . $this->control_pid . " -o comm=", $output, $return_var);
+      if ( $output[0] !== "start.py" ) {
+         $this->control_pid = -1;
+      }
 
       // Find pid
       exec("ps ahxwwo pid,command", $output);
@@ -23,10 +28,6 @@ class FactorioServer {
          if (strpos($v, $factorio_bin) !== false) {
             // print "Found it! -- ".  $v;
             $this->factorio_pid = (int)substr($v, 1, strpos($v, " ",2) - 1);
-         }
-         if (strpos($v, $control_bin) !== false) {
-            // print "Found it! -- ".  $v;
-            $this->control_pid = (int)substr($v, 1, strpos($v, " ",2) - 1);
          }
       }
 
