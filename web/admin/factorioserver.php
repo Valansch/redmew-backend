@@ -16,18 +16,14 @@ class FactorioServer {
 
       $factorio_bin = $this->cwd . "/bin/x64/factorio";
 
-      $this->control_pid = file_get_contents($this->cwd . "/control_pid");
-      if ( ! posix_getpgid ($this->control_pid) ) {
+      $this->control_pid = file_exists($this->cwd . "/control_pid") ? file_get_contents($this->cwd . "/control_pid") : -1;
+      if ( ! is_numeric( $this->control_pid ) || ! posix_getpgid ($this->control_pid) ) {
          $this->control_pid = -1;
       }
 
-      // Find pid
-      exec("ps ahxwwo pid,command", $output);
-      foreach ( $output as $k => $v ) {
-         if (strpos($v, $factorio_bin) !== false) {
-            // print "Found it! -- ".  $v;
-            $this->factorio_pid = (int)substr($v, 1, strpos($v, " ",2) - 1);
-         }
+      $this->factorio_pid = file_exists($this->cwd . "/factorio_pid") ? file_get_contents($this->cwd . "/factorio_pid") : -1;
+      if ( ! is_numeric( $this->factorio_pid ) || ! posix_getpgid ($this->factorio_pid) ) {
+         $this->factorio_pid = -1;
       }
 
       $this->factorio_status = ( $this->factorio_pid > 0 ) ? "Running" : "Not running";
