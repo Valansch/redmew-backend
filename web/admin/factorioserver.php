@@ -53,7 +53,7 @@ class FactorioServer {
    }
 
 
-   public function getLog($lines = 50) {
+   public function getLog($lines = 20) {
       $output_tmp = "/tmp/current_log_output.log";
       $command = "tail " . $this->cwd . $this->_log_dir . $this->_log_name . " --lines " . $lines . " > " . $output_tmp;
       // print $command;

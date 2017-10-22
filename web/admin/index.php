@@ -7,15 +7,53 @@
 
    <script type="text/javascript">
    // var window.server_status;
+   var  serverControlTimeout = null;
+   var serverConsoleTimeout = null
+   var timePollControl = 5000;
+   var timePollConsole = 10000;
 
    $(document).ready(function () {
+      reloadStatus();
+      reloadConsole();
+
+      $("#serverControl ul a").click(function (e) {
+         e.preventDefault();
+
+         href = $(this).attr("href");
+         $("#serverControl .output").load(href);
+         $("#serverControl ul a").addClass("wait");
+
+         window.clearTimeout(serverControlTimeout);
+         serverControlTimeout = window.setTimeout(reloadStatus, timePollControl);
+
+      })
+   });
+
+   function serverControlButtonEnable() {
+      $("#serverControl ul a").removeClass("wait");
+   }
+
+   function reloadStatus() {
+      window.clearTimeout(serverControlTimeout);
+
       $.getJSON("status.php", function (json) {
          window.server_status = json;
          init_controls();
+         serverControlButtonEnable();
+
+         serverControlTimeout = window.setTimeout(reloadStatus, timePollControl);
+      });
+   }
+
+   function reloadConsole() {
+      window.clearTimeout(serverConsoleTimeout);
+
+      $("#console .output").load("console-log.php", function () {
+         $(this).scrollTop($(this)[0].scrollHeight);
+         serverConsoleTimeout = window.setTimeout(reloadConsole, timePollConsole);
       });
 
-      $("#console .output").load("console-log.php", function () { $(this).scrollTop($(this)[0].scrollHeight); } );
-   });
+   }
 
    function init_controls() {
       $("#controlPID").html( window.server_status.control_pid );
@@ -27,6 +65,7 @@
          $("#help-StartTMux xmp").load("help.php?topic=tmux");
          $("#serverControl ul").hide();
       } else {
+         $("#help-StartTMux").hide();
          $("#serverControl ul").show();
 
          if ( window.server_status.factorio_status == "Running" ) {
@@ -43,10 +82,7 @@
             $("#factorioSave").hide();
          }
       }
-
-
    }
-
 
    </script>
 </head>
@@ -71,6 +107,8 @@
          <li id="factorioSave"><a href="send-control.php?control=save" class="btn btn-custom btn-large btn-block">Save</a></li>
       </ul>
 
+      <div class="output"></div>
+
       <div id="help-StartTMux">
          <strong>Server control session not found. Please start the tmux using:</strong>
          <xmp></xmp>
@@ -79,12 +117,6 @@
 
    <div id="serverStatus">
       <h2>Server Status</h2>
-      <p>Todo - Convert to async JS call, send output to a div</p>
-      <div class="output"></div>
-   </div>
-
-   <div id="chat">
-      <h2>Chat</h2>
       <p>Todo - Convert to async JS call, send output to a div</p>
       <div class="output"></div>
    </div>
