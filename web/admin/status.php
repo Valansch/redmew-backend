@@ -1,14 +1,7 @@
-<html>
-<head>
-<meta http-equiv="refresh" content="1; URL=/admin/status.php">
-</head>
-<body>
-Status:
 <?php
-        echo(file_get_contents("/home/factorio/server/status"));
-?>
-</body>
-</html>
-~
-~
-~
+/**
+ * Reads the status of the server, and returns a JSON array
+ * @TODO -- Make it do that!
+ */
+ ?>
+{'server':'online','title':'redmew : Lorem Ipsum'}

@@ -1,0 +1,25 @@
+/* Redmew Specific Overrides of the factorio base styles */
+
+body {
+   padding: 10px;
+}
+
+#serverControl ul {
+   list-style: none;
+   margin: 0;
+   padding: 0;
+}
+
+#serverControl ul li {
+   float: left;
+}
+
+#serverControl li a {
+   width: 100px;
+   margin: 4px;
+}
+
+div {
+   clear: both;
+
+}
