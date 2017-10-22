@@ -10,7 +10,7 @@
    var  serverControlTimeout = null;
    var serverConsoleTimeout = null
    var timePollControl = 5000;
-   var timePollConsole = 10000;
+   var timePollConsole = 3000;
 
    $(document).ready(function () {
       reloadStatus();

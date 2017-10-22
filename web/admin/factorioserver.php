@@ -37,7 +37,7 @@ class FactorioServer {
    }
 
    public function serverControl($control) {
-      $this->_sendControl(":" . $control);
+      $this->_sendControl(':' . $control);
    }
 
    private function _sendControl( $contents ) {
