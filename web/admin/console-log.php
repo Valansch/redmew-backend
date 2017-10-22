@@ -8,9 +8,6 @@
 
 $Server = new FactorioServer();
 
-$output = [
-   "cwd" => $Server->cwd,
-   "pid" => $Server->pid,
-   "status" => $Server->status
-];
-print json_encode($output);
+$currentLog = $Server->getLog();
+
+print implode("<br />", explode( "\n", $currentLog) );

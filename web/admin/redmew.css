@@ -23,3 +23,13 @@ div {
    clear: both;
 
 }
+
+#console .output  {
+   border: 1px solid #999;
+   padding: 10px;
+   overflow-x: scroll;
+   overflow-y: scroll;
+   height: 500px;
+   white-space: nowrap;
+
+}
