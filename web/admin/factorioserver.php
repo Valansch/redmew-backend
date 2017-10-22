@@ -22,7 +22,7 @@ class FactorioServer {
          $this->control_pid = -1;
       }
 
-      $this->control_pid = file_exists($this->cwd . "/control_port") ? file_get_contents($this->cwd . "/control_port") : -1;
+      $this->control_port = file_exists($this->cwd . "/control_port") ? file_get_contents($this->cwd . "/control_port") : -1;
       if ( ! is_numeric( $this->control_port ) ) {
          $this->control_port = -1;
       }
