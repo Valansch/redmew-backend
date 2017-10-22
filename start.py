@@ -1,4 +1,4 @@
-#!/usr/bin/python
+#!/usr/bin/python3
 from subprocess import Popen, run, PIPE
 import time
 import signal
@@ -11,7 +11,7 @@ command_pipe = "/tmp/command_pipeline" + cwd + "/pipe"
 pid = 0
 live_log = cwd + "/log/live.log"
 log = cwd + "/log/log.log"
-cmd = cwd + "/bin/x64/factorio --server-settings " + cwd + "/server-settings.json --start-server " + cwd + "/saves/_autosave1.zip --console-log " + log + " --bind 5.9.164.209"
+cmd = cwd + "/bin/x64/factorio --server-settings " + cwd + "/server-settings.json --start-server " + cwd + "/saves/_autosave1.zip --console-log " + log #+ " --bind 5.9.164.209"
 
 def handler_stop_signal(signum, frame):
 	global pid
@@ -138,4 +138,3 @@ try:
 	start()
 except KeyboardInterrupt:
 	sys.exit(0)
-

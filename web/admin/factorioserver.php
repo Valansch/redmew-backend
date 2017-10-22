@@ -2,32 +2,36 @@
 
 class FactorioServer {
    public $cwd = "";
-   public $pid = -1;
-   public $status = "Unknown";
+   public $factorio_pid = -1;
+   public $factorio_status = "Unknown";
+   public $control_pid = -1;
+   public $control_status = "Unknown";
 
-   private $_log_dir = "/";
-   private $_log_name = "factorio-current.log";
+   private $_log_dir = "/log/";
+   private $_log_name = "live.log";
 
    public function __construct() {
       $web_cwd = realpath(dirname(__FILE__));
       $this->cwd = realpath( $web_cwd . "/../../");
 
       $factorio_bin = $this->cwd . "/bin/x64/factorio";
+      $control_bin = $this->cwd . "/start.py";
 
       // Find pid
       exec("ps ahxwwo pid,command", $output);
       foreach ( $output as $k => $v ) {
          if (strpos($v, $factorio_bin) !== false) {
             // print "Found it! -- ".  $v;
-            $this->pid = (int)substr($v, 1, strpos($v, " ",2) - 1);
+            $this->factorio_pid = (int)substr($v, 1, strpos($v, " ",2) - 1);
+         }
+         if (strpos($v, $control_bin) !== false) {
+            // print "Found it! -- ".  $v;
+            $this->control_pid = (int)substr($v, 1, strpos($v, " ",2) - 1);
          }
       }
 
-      if ( $this->pid > 0 ) {
-         $this->status = "Running";
-      } else {
-         $this->status = "Not running";
-      }
+      $this->factorio_status = ( $this->factorio_pid > 0 ) ? "Running" : "Not running";
+      $this->control_status = ( $this->control_pid > 0 ) ? "Running" : "Not running";
    }
 
    public function startServer() {
@@ -63,4 +67,13 @@ class FactorioServer {
 
    }
 
+   public function helpTMux() {
+return "tmux new -s dev
+ctrl + B
+:split-window -v
+tail -f log/live.log
+ctrl + B + arrow-up
+" . $this->cwd . "/start.py";
+
+   }
 }

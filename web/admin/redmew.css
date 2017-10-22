@@ -33,3 +33,32 @@ div {
    white-space: nowrap;
 
 }
+
+#help-StartTMux { display: none;}
+#serverControl ul li { display: none; }
+xmp {
+   font-family: Courier, monospace;
+   border: 1px solid #fff;
+   padding: 10px;
+}
+
+dl {
+   width: 350px;
+   overflow: hidden;
+   padding: 0;
+   margin: 0;
+}
+
+dt {
+   clear: both;
+   float: left;
+   width: 30%;
+   padding: 0;
+   margin: 0;
+}
+dd {
+   float: left;
+   width: 70%;
+   padding: 0;
+   margin: 0;
+}

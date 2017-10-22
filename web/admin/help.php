@@ -8,4 +8,11 @@
 
 $Server = new FactorioServer();
 
-print json_encode($Server);
+$topic = isset( $_GET["topic"] ) ? $_GET["topic"] : "";
+
+switch ( $topic ) {
+   case "tmux" :
+      print $Server->helpTMux();
+      break;
+
+}
