@@ -14,7 +14,6 @@
          init_controls();
       });
 
-      $("#chat .output").load("chat.php");
       $("#console .output").load("console-log.php", function () { $(this).scrollTop($(this)[0].scrollHeight); } );
    });
 

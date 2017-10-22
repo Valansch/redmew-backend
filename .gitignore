@@ -12,4 +12,4 @@ temp/
 data/
 *.log
 status
-control_pid
+*pid*
