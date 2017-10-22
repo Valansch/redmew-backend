@@ -131,7 +131,7 @@ def start():
 	print("Starting server with info " + cmd)
 	with Popen(cmd + " >> " + live_log, shell=True, stdin=PIPE, bufsize=1, universal_newlines=True) as shell:
 		pid = shell.pid + 1
-		#update_external_pid()
+		update_external_pid()
 		for x in range(100000000):
 			#Check for input every 0.1 sec
 			if select.select([sys.stdin], [], [], 0.1)[0]:
