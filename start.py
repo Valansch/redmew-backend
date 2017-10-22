@@ -1,4 +1,4 @@
-#!/usr/bin/python3
+#!/usr/bin/python
 from subprocess import Popen, run, PIPE
 import time
 import signal
