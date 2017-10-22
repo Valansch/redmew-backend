@@ -18,7 +18,7 @@ class FactorioServer {
 
       $this->control_pid = file_get_contents($this->cwd . "/control_pid");
       exec("ps --pid " . $this->control_pid . " -o comm=", $output, $return_var);
-      if ( $output[0] !== "start.py" ) {
+      if ( strlen($output[0]) == 0) {
          $this->control_pid = -1;
       }
 
