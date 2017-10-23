@@ -12,8 +12,6 @@ if (  ! empty( $control ) ) {
    $Server = new FactorioServer();
    switch ( $control ) {
       case "update":
-         print "Non functional.";
-         break;
       case "start":
       case "restart":
       case "stop":

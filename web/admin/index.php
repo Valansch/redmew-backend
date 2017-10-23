@@ -37,6 +37,7 @@
            url: $(this).attr("action"),
            data: { command: command }
          });
+         reloadConsole();
          $("#command").val("");
       });
    });
@@ -136,7 +137,7 @@
       [ <a href="console-log.php?all=all" target="_blank">Full Log</a> ]
       <div class="output"></div>
       <form method="post" action="send-command.php">
-         <input type="text" id="command" name="command" />
+         <input type="text" autocomplete="off" id="command" name="command" />
          <input type="submit" value="Send" />
       </form>
    </div>
