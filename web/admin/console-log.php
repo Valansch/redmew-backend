@@ -8,6 +8,13 @@
 
 $Server = new FactorioServer();
 
-$currentLog = $Server->getLog();
+if ( isset($_GET["all"] ) ) {
+   $currentLog = $Server->getLogDownload();
 
-print implode("<br />", explode( "\n", $currentLog) );
+   header("content-type: text/plain");
+   echo ( file_get_contents( $currentLog ));
+} else {
+   $currentLog = $Server->getLog();
+   print implode("<br />", explode( "\n", $currentLog) );
+
+}

@@ -104,6 +104,7 @@
 
    <div id="serverControl">
       <h2>Server Command and Control</h2>
+      <p>@TODO: Player Count / List</p>
       <dl>
          <dt>Control PID</dt>
          <dd id="controlPID"></dd>
@@ -130,14 +131,9 @@
       </div>
    </div>
 
-   <div id="serverStatus">
-      <h2>Server Status</h2>
-      <p>Todo - Convert to async JS call, send output to a div</p>
-      <div class="output"></div>
-   </div>
-
    <div id="console">
       <h2>Server Console</h2>
+      [ <a href="console-log.php?all=all" target="_blank">Full Log</a> ]
       <div class="output"></div>
       <form method="post" action="send-command.php">
          <input type="text" id="command" name="command" />

@@ -88,6 +88,11 @@ class FactorioServer {
       return file_get_contents( $output_tmp );
    }
 
+   public function getLogDownload() {
+      $file = $this->cwd . $this->_log_dir . $this->_log_name;
+      return $file;
+   }
+
    public function helpTMux() {
 return "tmux new -s dev
 ctrl + B
