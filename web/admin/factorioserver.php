@@ -8,6 +8,8 @@ class FactorioServer {
    public $control_status = "Unknown";
    public $control_port = -1;
 
+   public $serverSettings = ["name" => "", "description" => "", "tags" => [] ];
+
    private $_log_dir = "/log/";
    private $_log_name = "live.log";
 
@@ -34,6 +36,19 @@ class FactorioServer {
 
       $this->factorio_status = ( $this->factorio_pid > 0 ) ? "Running" : "Not running";
       $this->control_status = ( $this->control_pid > 0 ) ? "Running" : "Not running";
+
+      $this->readServerInfo();
+   }
+
+   private function readServerInfo() {
+      $file = $this->cwd . "/server-settings.json";
+      $data = file_get_contents( $file );
+      $data = json_decode($data, true);
+      $this->serverSettings = [
+         "name" => $data["name"],
+         "description" => $data["description"],
+         "tags" => $data["tags"]
+      ];
    }
 
    public function serverControl($control) {

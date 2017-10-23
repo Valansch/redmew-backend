@@ -152,4 +152,3 @@ def start():
 				print(line, file=shell.stdin, flush=True)
 
 start()
-
