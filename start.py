@@ -81,13 +81,13 @@ def change_state_stopped():
 			line = sys.stdin.readline()
 			if len(line) > 0:
 				if line[0] == ":":
-					parse_and_execute(line[1:])
+					parse_and_execute(line[1:], None)
 		#external cmd
 		if select.select([mySocket], [], [], 0.1)[0]:
 			(data, _) = mySocket.recvfrom(16384)
 			line = data.decode('UTF-8')
 			if line[0] == ":":
-				parse_and_execute(line[1:])
+				parse_and_execute(line[1:], None)
 
 def restart():
 	stop()
