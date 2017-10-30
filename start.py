@@ -118,7 +118,7 @@ def parse_and_execute(command, shell):
 		start()
 	elif command == "save":
 		if shell:
-			print("silent-command game.server_save()", file=shell.stdin, flush=True)
+			print("/silent-command game.server_save()", file=shell.stdin, flush=True)
 	else:
 		print("Unknown command: " + command)
 def start():
