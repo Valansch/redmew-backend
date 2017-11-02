@@ -34,6 +34,10 @@ def get_update_users_command():
 	mods	= cwd + "/script-output/mods.lua"
 	print("Updating users")
 	cmd = " global.regulars = "
+	if not os.path.isfile(regulars):
+		return "/silent-command log('Updating regulars failed. Missing file: " + regulars + "')"
+	if not os.path.isfile(mods):
+		return "/silent-command log('Updating regulars failed. Missing file: " + mods + "')"
 	with open(regulars, 'r') as f:
 		cmd = cmd + f.read().replace('\n', ' ')
 	with open(mods, 'r') as f:
