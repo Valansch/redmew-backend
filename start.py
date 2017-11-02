@@ -28,15 +28,6 @@ with open(cwd + "/control_pid", 'w') as f:
 with open(cwd + "/control_port", 'w') as f:
 	f.write(str(os.getpid() + 32000))
 
-def handler_stop_signal(signum, frame):
-	global pid
-	if not is_stopped():
-		cmd = "kill -s " + str(signum) + " " + str(pid)
-		run(cmd, shell=True)
-	sys.exit(0)
-signal.signal(signal.SIGINT, handler_stop_signal)
-signal.signal(signal.SIGTERM, handler_stop_signal)
-
 def get_update_users_command():
 	global cwd
 	regulars	= cwd + "/script-output/regulars.lua"
@@ -154,4 +145,7 @@ def start():
 				line = get_update_users_command()
 				print(line, file=shell.stdin, flush=True)
 
-start()
+try:
+	start()
+except KeyboardInterrupt:
+	print("Bye.")
