@@ -1,5 +1,5 @@
 #!/usr/bin/python
-from subprocess import Popen, run, PIPE
+from subprocess import Popen, run, PIPE, check_output
 from socket import socket, gethostbyname, AF_INET, SOCK_DGRAM
 import time
 import signal
@@ -16,7 +16,7 @@ if (len(sys.argv) > 1 and sys.argv[1] == "-nobind"):
 	bind_arg = ""
 
 cmd = cwd + "/bin/x64/factorio --server-settings " + cwd + "/server-settings.json --start-server " + cwd + "/saves/_autosave1.zip --console-log " + log + bind_arg
-
+cmd_template = cmd
 
 port_number = os.getpid() + 32000 #i feel dirty
 mySocket = socket( AF_INET, SOCK_DGRAM )
@@ -89,6 +89,14 @@ def restart():
 	for x in range(10000000):
 		time.sleep(1)
 		if is_stopped(): break
+	output = ""
+	try:
+		output = str(check_output("ls -t " + cwd + "/saves/_autosave*.zip | head -1", shell=True))[1:].replace('\\n', '')
+		print("Loading latest save file: " + output)
+		global cmd_template
+		cmd = cmd_template.replace(cwd + "/saves/_autosave1.zip", output)
+	except:
+		print("Loading latest save file failed, launching _autosave1.zip")
 	start()
 	sys.exit(0)
 
