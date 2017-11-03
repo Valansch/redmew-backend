@@ -5,5 +5,5 @@
 ["selen"] = "",
 ["sholvo"] = "",
 ["animal"] = "",
-["valansch"] = "",
+["gynox"] = "",
 }
