@@ -1,5 +1,5 @@
 #!/usr/bin/python
-from subprocess import Popen, run, PIPE
+from subprocess import Popen, run, PIPE, check_output
 from socket import socket, gethostbyname, AF_INET, SOCK_DGRAM
 import time
 import signal
@@ -16,7 +16,7 @@ if (len(sys.argv) > 1 and sys.argv[1] == "-nobind"):
 	bind_arg = ""
 
 cmd = cwd + "/bin/x64/factorio --server-settings " + cwd + "/server-settings.json --start-server " + cwd + "/saves/_autosave1.zip --console-log " + log + bind_arg
-
+cmd_template = cmd
 
 port_number = os.getpid() + 32000 #i feel dirty
 mySocket = socket( AF_INET, SOCK_DGRAM )
@@ -28,21 +28,16 @@ with open(cwd + "/control_pid", 'w') as f:
 with open(cwd + "/control_port", 'w') as f:
 	f.write(str(os.getpid() + 32000))
 
-def handler_stop_signal(signum, frame):
-	global pid
-	if not is_stopped():
-		cmd = "kill -s " + str(signum) + " " + str(pid)
-		run(cmd, shell=True)
-	sys.exit(0)
-signal.signal(signal.SIGINT, handler_stop_signal)
-signal.signal(signal.SIGTERM, handler_stop_signal)
-
 def get_update_users_command():
 	global cwd
 	regulars	= cwd + "/script-output/regulars.lua"
 	mods	= cwd + "/script-output/mods.lua"
 	print("Updating users")
 	cmd = " global.regulars = "
+	if not os.path.isfile(regulars):
+		return "/silent-command log('Updating regulars failed. Missing file: " + regulars + "')"
+	if not os.path.isfile(mods):
+		return "/silent-command log('Updating regulars failed. Missing file: " + mods + "')"
 	with open(regulars, 'r') as f:
 		cmd = cmd + f.read().replace('\n', ' ')
 	with open(mods, 'r') as f:
@@ -81,23 +76,31 @@ def change_state_stopped():
 			line = sys.stdin.readline()
 			if len(line) > 0:
 				if line[0] == ":":
-					parse_and_execute(line[1:])
+					parse_and_execute(line[1:], None)
 		#external cmd
 		if select.select([mySocket], [], [], 0.1)[0]:
 			(data, _) = mySocket.recvfrom(16384)
 			line = data.decode('UTF-8')
 			if line[0] == ":":
-				parse_and_execute(line[1:])
+				parse_and_execute(line[1:], None)
 
 def restart():
 	stop()
 	for x in range(10000000):
 		time.sleep(1)
 		if is_stopped(): break
+	output = ""
+	try:
+		output = str(check_output("ls -t " + cwd + "/saves/_autosave*.zip | head -1", shell=True))[1:].replace('\\n', '')
+		print("Loading latest save file: " + output)
+		global cmd_template
+		cmd = cmd_template.replace(cwd + "/saves/_autosave1.zip", output)
+	except:
+		print("Loading latest save file failed, launching _autosave1.zip")
 	start()
 	sys.exit(0)
 
-def parse_and_execute(command):
+def parse_and_execute(command, shell):
 	command = command.rstrip("\n")
 	if command == "":
 		pass
@@ -116,6 +119,9 @@ def parse_and_execute(command):
 		stop()
 		update()
 		start()
+	elif command == "save":
+		if shell:
+			print("/silent-command game.server_save()", file=shell.stdin, flush=True)
 	else:
 		print("Unknown command: " + command)
 def start():
@@ -135,7 +141,7 @@ def start():
 				line = sys.stdin.readline()
 				if len(line) > 0:
 					if line[0] == ":":
-						parse_and_execute(line[1:])
+						parse_and_execute(line[1:], shell)
 					else:
 						print(line, file=shell.stdin, flush=True)
 			#external cmd
@@ -143,7 +149,7 @@ def start():
 				(data, _) = mySocket.recvfrom(16384)
 				line = data.decode('UTF-8')
 				if line[0] == ":":
-					parse_and_execute(line[1:])
+					parse_and_execute(line[1:], shell)
 				else:
 					print(line, file=shell.stdin, flush=True)
 			#Update users after 20 sec
@@ -151,4 +157,7 @@ def start():
 				line = get_update_users_command()
 				print(line, file=shell.stdin, flush=True)
 
-start()
+try:
+	start()
+except KeyboardInterrupt:
+	print("Bye.")
