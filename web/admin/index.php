@@ -64,7 +64,7 @@ if (!$validated) {
          command = $("#command").val();
          if (command.charAt(0) != '/') {
             name = '<?php print $_SERVER['PHP_AUTH_USER']; ?>';
-            var msg = "'<" + name + "@Server>: " + command + "'";
+            var msg = "'[" + name + "@Server]: " + command + "'";
             command = "/silent-command game.print(" + msg +  ")  log(" + msg + ")";
          }
          $.ajax({
