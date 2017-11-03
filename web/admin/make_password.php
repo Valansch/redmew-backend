@@ -1,14 +1,14 @@
-<head>
-<script>
-	function redirect() {
-		var URL = window.location + "?password=" + document.getElementById("pw").value;
-		window.location.replace(URL);
-	}
-</script>
-</head>
 <?php
-if ($_GET['password'] != null) {
-	var_dump(password_hash($_GET['password'], PASSWORD_DEFAULT));
+if ($_POST['password'] != null and ($_POST['user'] != null)) {
+	echo($_POST['user']);
+	echo(password_hash($_POST['password'], PASSWORD_DEFAULT));
 } else {
-	echo('Password: <input type="input" id="pw"/>	<input type="submit" onclick="redirect()" />');
-}
+?>
+	<form method="post">
+	Username:
+		<input type="input" name="user"/>
+	Password: <input type="input" name="password"/>
+		<input type="submit"/>
+	</form>
+<?php } ?>
+
