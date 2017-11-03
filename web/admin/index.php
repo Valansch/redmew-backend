@@ -1,3 +1,33 @@
+<?php
+
+if (!isset($_SERVER['PHP_AUTH_USER'])) {
+   header('WWW-Authenticate: Basic realm="Redmew Admin Console"');
+   header('HTTP/1.0 401 Unauthorized');
+   die('You\'re going to need to go ahead and authenticate');
+}
+
+$user = $_SERVER['PHP_AUTH_USER'];
+$pass = $_SERVER['PHP_AUTH_PW'];
+
+include("auth_data.php");
+
+if ( ! isset($auth_admins[$user]) ) {
+   header('WWW-Authenticate: Basic realm="My Realm"');
+   header('HTTP/1.0 401 Unauthorized');
+   die ("Nope, no bueno");
+}
+
+$pw_hash = $auth_admins[$user];
+
+$validated = password_verify( $pass, $pw_hash );
+
+if (!$validated) {
+  header('WWW-Authenticate: Basic realm="My Realm"');
+  header('HTTP/1.0 401 Unauthorized');
+  die ("Nope, no bueno");
+}
+
+?>
 <html>
 <head>
    <title>redmew: Factorio Server Control</title>
