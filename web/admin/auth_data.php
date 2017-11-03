@@ -4,5 +4,5 @@
 // Usernames all lower case
 $auth_admins = array(
    "triston" => '$2y$10$h0XIIXHIUhK6.igGqG0vteUSkwwPLqiLteIP5xTb8L9.uuALfv/qC',
-   "valansch" => '$2y$10$ydzhquAF56E1GQxgPGRs2Ouj7tB/bS/Jxb/nVcWlRO9IIQ5LCGeOG',
+   "valansch" => '$2y$10$fK2Hdly/B7jopZIwOHxFTO2W89qgaDqRXW0adfTOWDBCa7gxV7Fni',
 );
