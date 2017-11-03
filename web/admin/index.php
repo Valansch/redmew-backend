@@ -62,10 +62,15 @@ if (!$validated) {
       $("form").submit(function (e) {
          e.preventDefault();
          command = $("#command").val();
+         if (command.charAt(0) != '/') {
+            name = '<?php print $_SERVER['PHP_AUTH_USER']; ?>';
+            var msg = "'<" + name + "@Server>: " + command + "'";
+            command = "/silent-command game.print(" + msg +  ")  log(" + msg + ")";
+         }
          $.ajax({
            type: "POST",
            url: $(this).attr("action"),
-           data: { command: command }
+           data: { name : name, command: command }
          });
          reloadConsole();
          $("#command").val("");
@@ -170,7 +175,7 @@ if (!$validated) {
       [ <a href="console-log.php?all=all" target="_blank">Full Log</a> ]
       <div class="output"></div>
       <form method="post" action="send-command.php">
-         <input type="text" autocomplete="off" id="command" name="command" />
+         <?php print $_SERVER['PHP_AUTH_USER']; ?>: <input type="text" autocomplete="off" id="command" name="command" />
          <input type="submit" value="Send" />
       </form>
    </div>
