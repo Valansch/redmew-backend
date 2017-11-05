@@ -4,7 +4,9 @@ import re
 import os
 import discord
 import asyncio
+from subprocess import Popen
 
+Popen("./upload_chat.sh", shell=True, bufsize=1, universal_newlines=True)
 PORT = 0
 cwd = os.path.dirname(os.path.abspath(__file__))
 with open(cwd + "/control_port", 'r') as f:
