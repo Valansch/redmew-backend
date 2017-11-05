@@ -32,7 +32,7 @@ async def on_ready():
 
 @client.event
 async def on_message(message):
-	if message.channel.name == 'ingame-chat' and message.author.name != client.user.name:
+	if message.channel.name == 'ingame-chat' and !message.author.bot:
 		send_msg(message.author.name, message.content)
 
 client.run('MzU2NTQ2MDI5MDY5NDAyMTE0.DOCnIQ.b25HdFO_9Uz34ose41aen4Oa4AM')
