@@ -135,4 +135,8 @@
 ["anubi5"] = "",
 ["asfin"] = "",
 ["emptyrov"] = "",
+["chr15"] = "",
+["hunternr1"] = "",
+["fredjones"] = "",
+["rothlo"] = "",
 }
