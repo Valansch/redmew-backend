@@ -18,12 +18,17 @@ dest=("localhost", PORT)
 client = discord.Client()
 
 def send_msg(username, msg):
-	msg = re.sub(r'[^A-Za-z0-9 ]', '', msg).strip()
-	username = re.sub(r'[^A-Za-z0-9 ]', '', username).strip()
+	msg = re.sub(r'[\n\r\\"\']', '', msg).strip()
+	username = re.sub(r'[\n\r\\"\']', '', username).strip()
 	if msg != '':
 		template = '/silent-command game.print("[%s@discord]: %s")' % (username, msg)
 		print("%s: %s" % (username, msg))
 		sckt.sendto(template.encode(), dest)
+
+def spy(username):
+	username = re.sub(r'[\n\r\\"\']', '', username).strip()
+	template = '/silent-command if spyshot ~= nil then spyshot("%s") end' % username
+	sckt.sendto(template.encode(), dest)
 
 @client.event
 async def on_ready():
@@ -35,6 +40,11 @@ async def on_ready():
 @client.event
 async def on_message(message):
 	if message.channel.name == 'ingame-chat' and not message.author.bot:
+		if message.content.startswith("/spy"):
+			matches = re.match("^/spy (.*)", message.content)
+			if matches and matches.group(1):
+				spy(matches.group(1))
+				return
 		send_msg(message.author.name, message.content)
 
 client.run('MzU2NTQ2MDI5MDY5NDAyMTE0.DOCnIQ.b25HdFO_9Uz34ose41aen4Oa4AM')
