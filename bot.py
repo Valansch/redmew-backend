@@ -27,7 +27,7 @@ def send_msg(username, msg):
 
 def spy(username):
 	username = re.sub(r'[\n\r\\"\']', '', username).strip()
-	template = '/silent-command if spyshot ~= nil then spyshot("%s") end' % username
+	template = '/spyshot %s' % username
 	sckt.sendto(template.encode(), dest)
 
 @client.event
