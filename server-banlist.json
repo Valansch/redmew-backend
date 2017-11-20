@@ -1,5 +1,10 @@
 [
   {
+    "username": "aberen",
+    "reason": "remove pipe",
+    "address": "204.8.232.77"
+  },
+  {
     "username": "akindooo",
     "reason": "griefing, removing rnd stuff, scarbvis, 08-17-2017",
     "address": "202.243.90.96"
@@ -17,6 +22,11 @@
     "username": "biem",
     "reason": "griefing",
     "address": "83.84.35.220"
+  },
+  {
+    "username": "bkbik3r",
+    "reason": "Tried to deconstruct 26,000 entities 10 seconds after joining -- TWLTriston",
+    "address": "75.136.160.188"
   },
   {
     "username": "brentonl829",
@@ -37,8 +47,17 @@
     "reason": "griefing (removal of bus belts, pipes, etc)"
   },
   {
+    "username": "crulio87twink",
+    "address": "37.201.242.88"
+  },
+  {
     "username": "darkmatter2222",
     "reason": "copper explosion bullshit"
+  },
+  {
+    "username": "dwsx04",
+    "reason": "Griefed the server for 2 hours, removed over 400 entities, placed another 400. Never unban 2017-11-09 -Valansch",
+    "address": "0.0.0.0"
   },
   {
     "username": "ffin",
@@ -48,6 +67,10 @@
   {
     "username": "fuckoffmate",
     "reason": "heavy griefing"
+  },
+  {
+    "username": "gaengster",
+    "address": "0.0.0.0"
   },
   {
     "username": "gaunter",
@@ -113,6 +136,16 @@
     "address": "109.152.201.156"
   },
   {
+    "username": "linx123",
+    "reason": "power griefer",
+    "address": "0.0.0.0"
+  },
+  {
+    "username": "mapanett",
+    "reason": "Griefed some Assemblers, miners and belts",
+    "address": "124.183.145.188"
+  },
+  {
     "username": "maxrosenbaum",
     "reason": "griefing valansch",
     "address": "98.210.229.50"
@@ -132,6 +165,11 @@
     "address": "100.8.237.29"
   },
   {
+    "username": "misterx2123",
+    "reason": " Reversed belt to fuel, blowing stuff up, deconing base -dinodod",
+    "address": "0.0.0.0"
+  },
+  {
     "username": "mitchell.playz",
     "reason": "griefing"
   },
@@ -145,14 +183,34 @@
     "reason": "griefing"
   },
   {
+    "username": "orenji",
+    "reason": "Taking power poles and causing problems -- TWLTriston",
+    "address": "0.0.0.0"
+  },
+  {
     "username": "p01550n",
     "reason": "grieeeeeeeeeeeeeeeeeeeefer",
     "address": "88.163.251.33"
   },
   {
+    "username": "pingokingdk",
+    "reason": "Breaking the bus -- TWLTriston",
+    "address": "0.0.0.0"
+  },
+  {
     "username": "rr__",
     "reason": " griefer",
     "address": "86.90.58.146"
+  },
+  {
+    "username": "spafindoople",
+    "reason": "removed many belts, left - 2017-11-9 valansch",
+    "address": "0.0.0.0"
+  },
+  {
+    "username": "tablefinder",
+    "reason": "general greifing -- twltriston",
+    "address": "58.182.158.9"
   },
   {
     "username": "tarquinius",
@@ -161,6 +219,11 @@
   {
     "username": "terra_titanius",
     "address": "174.3.241.108"
+  },
+  {
+    "username": "testudo",
+    "reason": "remove train stops",
+    "address": "76.236.28.165"
   },
   {
     "username": "thiccnigga",
@@ -178,5 +241,14 @@
   {
     "username": "vinnidermaster",
     "reason": "literal nazism"
+  },
+  {
+    "username": "waku",
+    "address": "93.215.120.165"
+  },
+  {
+    "username": "wladix",
+    "reason": "got handsy with the power",
+    "address": "0.0.0.0"
   }
 ]
