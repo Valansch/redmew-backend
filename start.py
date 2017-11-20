@@ -17,6 +17,7 @@ if (len(sys.argv) > 1 and sys.argv[1] == "-nobind"):
 
 cmd = cwd + "/bin/x64/factorio --server-settings " + cwd + "/server-settings.json --start-server-load-latest --console-log " + log + bind_arg
 
+print("Controlpid: " + str(os.getpid()))
 port_number = os.getpid() + 32000 #i feel dirty
 mySocket = socket( AF_INET, SOCK_DGRAM )
 mySocket.bind(('localhost', port_number))
@@ -124,7 +125,7 @@ def start():
 
 	print("Starting server with info " + cmd)
 	with Popen(cmd + " >> " + live_log, shell=True, stdin=PIPE, bufsize=1, universal_newlines=True) as shell:
-		pid = shell.pid + 1
+		pid = shell.pid + 2
 		update_external_pid()
 		for x in range(100000000):
 			#Check for input every 0.1 sec
