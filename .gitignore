@@ -8,6 +8,7 @@ bin/
 scenarios/
 backup/
 script-output/
+saves/
 temp/
 data/
 *.log
