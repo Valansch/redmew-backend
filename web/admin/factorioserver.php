@@ -20,6 +20,7 @@ class FactorioServer {
       $factorio_bin = $this->cwd . "/bin/x64/factorio";
 
       $this->control_pid = file_exists($this->cwd . "/control_pid") ? file_get_contents($this->cwd . "/control_pid") : -1;
+      $this->control_pid = (integer)$this->control_pid;
       if ( ! is_numeric( $this->control_pid ) || ! posix_getpgid ($this->control_pid) ) {
          $this->control_pid = -1;
       }
@@ -30,6 +31,7 @@ class FactorioServer {
       }
 
       $this->factorio_pid = file_exists($this->cwd . "/factorio_pid") ? file_get_contents($this->cwd . "/factorio_pid") : -1;
+      $this->factorio_pid = (integer)$this->factorio_pid;
       if ( ! is_numeric( $this->factorio_pid ) || ! posix_getpgid ($this->factorio_pid) ) {
          $this->factorio_pid = -1;
       }
