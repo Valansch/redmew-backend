@@ -26,6 +26,8 @@ class FactorioServer {
       }
 
       $this->control_port = file_exists($this->cwd . "/control_port") ? file_get_contents($this->cwd . "/control_port") : -1;
+
+      $this->control_port = (integer)$this->control_port;
       if ( ! is_numeric( $this->control_port ) ) {
          $this->control_port = -1;
       }
