@@ -37,7 +37,7 @@ pending_ban = None
 
 # Callback for chatlog monitor
 def handle_factorio_chat(notifier):
-	line = chatlog.readline().rstrip('\n')
+	line = "".join(chatlog.readlines()).rstrip('\n').replace('\n', ' ')
 	matches = re.match(r"[0-9-]* [0-9:]* \[([A-Z]*)\] (.*)", line)
 	if matches and matches.group(1) and matches.group(2):
 		event = matches.group(1)
@@ -62,7 +62,7 @@ def replace_mentions(match):
 
 async def send_msg_to_discord(event, msg):
 	print(msg)
-	msg = re.sub(r"@(\w+)", replace_mentions, msg)
+	msg = re.sub(r"@(\S+)", replace_mentions, msg)
 	server = client.get_server('312150126766456832') # redmew server
 	channel = discord.Object(id='356780115159547914') # ingame-chat
 	if event == "JOIN":
