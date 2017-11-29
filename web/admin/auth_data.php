@@ -11,4 +11,5 @@ $auth_admins = array(
    "diffiehellman" => '$2y$10$BmjvpsLgnDMy7VXAjfy6VOX3F71ldfQf2DcCX1TNs6dLQX2/mbQnS',
    "gynox" => '$2y$10$B9S0zF184lUw1jk7uzjf9Obf8CvlMqsPzxApCqNox/2vsSfHHVOCm',
    "dinodod" => '$2y$10$m9yoPp54DrFkdig57ks0YOGBQ.14ydzjBN9hE6D3JjjKosjsBO1Qu',
+   "air20" => '$2y$10$fdYjIe4SbHyueIAw6W81yuZUzm2fvbqH6XNbPisFNhHivZrpV5mFS',
 );

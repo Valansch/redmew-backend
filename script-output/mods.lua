@@ -3,7 +3,8 @@
 ["mbas"] = "",
 ["selen"] = "",
 ["sholvo"] = "",
+["antonius."] = "",
+["xerol"] = "",
 ["newcott"] = "",
 ["pirion"] = "",
-["xerol"] = "",
 }

@@ -1,7 +1,6 @@
 {["helpower2"] = "",
 ["rorror"] = "",
 ["medival3"] = "",
-["dpoba"] = "",
 ["settdigger"] = "",
 ["cheeselicker"] = "",
 ["cpaca0"] = "",
@@ -117,7 +116,10 @@
 ["mesohorknee"] = "",
 ["brl_chacal"] = "",
 ["spechok"] = "",
+["luk4kasz"] = "",
+["copperbotte"] = "",
 ["dq_shell"] = "",
+["bunchofrocks"] = "",
 ["facere"] = "",
 ["xerol"] = "",
 ["pirion"] = "",
@@ -125,3 +127,4 @@
 ["preizhour"] = "",
 ["sicnarf"] = "",
 }
+
