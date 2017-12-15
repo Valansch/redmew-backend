@@ -15,7 +15,9 @@ bind_arg = " --bind 5.9.164.209"
 if (len(sys.argv) > 1 and sys.argv[1] == "-nobind"):
 	bind_arg = ""
 
-cmd = cwd + "/bin/x64/factorio --server-settings " + cwd + "/server-settings.json --start-server-load-latest --console-log " + log + bind_arg
+load_save_cmd = cwd + "/bin/x64/factorio --server-settings " + cwd + "/server-settings.json --start-server-load-latest --console-log " + log + bind_arg
+start_scenario_cmd = cwd + "/bin/x64/factorio --server-settings " + cwd + "/server-settings.json --start-server-load-scenario RedMew --console-log " + log + bind_arg
+cmd = load_save_cmd
 
 print("Controlpid: " + str(os.getpid()))
 port_number = os.getpid() + 32000 #i feel dirty
@@ -57,6 +59,7 @@ def update():
 	print("Updating")
 	run(cwd + "/update.sh", shell=True)
 
+
 def stop():
 	if not is_stopped():
 		print("Stopping server")
@@ -93,6 +96,18 @@ def restart():
 	start()
 	sys.exit(0)
 
+def load_scenario():
+	if not is_stopped(): stop()
+	for x in range(10000000):
+		time.sleep(1)
+		if is_stopped(): break
+	print("Loading scenario RedMew")
+	global start_scenario_cmd
+	global cmd
+	cmd = start_scenario_cmd
+	start()
+	sys.exit(0)
+
 def parse_and_execute(command, shell):
 	command = command.rstrip("\n")
 	if command == "":
@@ -104,8 +119,13 @@ def parse_and_execute(command, shell):
 			change_state_stopped()
 	elif command == "start":
 		if is_stopped():
+			global load_save_cmd
+			global cmd
+			cmd = load_save_cmd
 			start()
 		else: print("Server already running")
+	elif command == "loadscenario":
+		load_scenario()
 	elif command == "restart":
 		restart()
 	elif command == "update":
