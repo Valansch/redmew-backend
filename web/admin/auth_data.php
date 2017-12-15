@@ -12,4 +12,5 @@ $auth_admins = array(
    "gynox" => '$2y$10$B9S0zF184lUw1jk7uzjf9Obf8CvlMqsPzxApCqNox/2vsSfHHVOCm',
    "dinodod" => '$2y$10$m9yoPp54DrFkdig57ks0YOGBQ.14ydzjBN9hE6D3JjjKosjsBO1Qu',
    "air20" => '$2y$10$fdYjIe4SbHyueIAw6W81yuZUzm2fvbqH6XNbPisFNhHivZrpV5mFS',
+   "sholvo" => '$2y$10$285KDr/OWdYizPfVhcf/yeeyYazYzgD45kztt2DJJQ9aeK4r1bNHu',
 );
