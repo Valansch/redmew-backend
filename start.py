@@ -55,7 +55,7 @@ def is_stopped():
 
 def update():
 	print("Updating")
-	run(cwd + "/install.sh --latest", shell=True)
+	run("./install.sh --latest", shell=True)
 
 def stop():
 	if not is_stopped():

@@ -1,4 +1,11 @@
 #!/bin/sh
+
+if [ -z "$1" ]
+ then
+  echo "Try --help"
+  exit
+fi
+
 while test $# -gt 0; do
   case "$1" in
     -h|--help)
@@ -27,12 +34,6 @@ while test $# -gt 0; do
         exit
   esac
 done
-
-if [ -z "$1" ]
- then
-  echo "Try --help"
-  exit
-fi
 
 if [ -z "$VERSION" ]
   then
