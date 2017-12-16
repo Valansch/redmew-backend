@@ -6,17 +6,17 @@ import signal
 import sys
 import os
 import select
+import os.path
 
-cwd = os.path.dirname(os.path.abspath(__file__))
 pid = 0
-live_log = cwd + "/log/live.log"
-log = cwd + "/log/log.log"
+live_log = "./log/live.log"
+log = "./log/log.log"
 bind_arg = " --bind 5.9.164.209"
 if (len(sys.argv) > 1 and sys.argv[1] == "-nobind"):
 	bind_arg = ""
 
-load_save_cmd = cwd + "/bin/x64/factorio --server-settings " + cwd + "/server-settings.json --start-server-load-latest --console-log " + log + bind_arg
-start_scenario_cmd = cwd + "/bin/x64/factorio --server-settings " + cwd + "/server-settings.json --start-server-load-scenario RedMew --console-log " + log + bind_arg
+load_save_cmd = "./bin/x64/factorio --server-settings ./server-settings.json --start-server-load-latest --console-log " + log + bind_arg
+start_scenario_cmd = "./bin/x64/factorio --server-settings ./server-settings.json --start-server-load-scenario RedMew --console-log " + log + bind_arg
 cmd = load_save_cmd
 
 print("Controlpid: " + str(os.getpid()))
@@ -25,15 +25,14 @@ mySocket = socket( AF_INET, SOCK_DGRAM )
 mySocket.bind(('localhost', port_number))
 
 
-with open(cwd + "/control_pid", 'w') as f:
+with open("./control_pid", 'w') as f:
 	f.write(str(os.getpid()))
-with open(cwd + "/control_port", 'w') as f:
+with open("./control_port", 'w') as f:
 	f.write(str(os.getpid() + 32000))
 
 def get_update_users_command():
-	global cwd
-	regulars	= cwd + "/script-output/regulars.lua"
-	mods	= cwd + "/script-output/mods.lua"
+	regulars	= "./script-output/regulars.lua"
+	mods	= "./script-output/mods.lua"
 	print("Updating users")
 	cmd = " global.regulars = "
 	if not os.path.isfile(regulars):
@@ -55,9 +54,8 @@ def is_stopped():
 	return False # no error, we can send a signal to the process
 
 def update():
-	global cwd
 	print("Updating")
-	run(cwd + "/update.sh", shell=True)
+	run("./update.sh", shell=True)
 
 
 def stop():
@@ -67,7 +65,7 @@ def stop():
 
 def update_external_pid():
 	global pid
-	with open(cwd + "/factorio_pid", 'w') as f:
+	with open("./factorio_pid", 'w') as f:
 		f.write(str(pid))
 
 def change_state_stopped():
@@ -93,6 +91,27 @@ def restart():
 		time.sleep(1)
 		if is_stopped(): break
 	print("Loading latest save file")
+	start()
+	sys.exit(0)
+
+def load_save():
+	stop()
+	for x in range(10000000):
+		time.sleep(1)
+		if is_stopped(): break
+	print("Loading ./web/admin/_autosave1.zip")
+	if not os.path.isfile("./web/admin/_autosave1.zip"):
+		run('echo "ERROR: Could not find file $PWD/web/admin/_autosave1.zip" >> ./log/live.log',shell=True)
+		print("file not found")
+		change_state_stopped()
+		sys.exit(0)
+
+	run("mv ./web/admin/_autosave1.zip ./saves/current_map.zip", shell=True)
+	run("touch ./saves/current_map.zip", shell=True)
+
+	global load_save_cmd
+	global cmd
+	cmd = load_save_cmd
 	start()
 	sys.exit(0)
 
@@ -126,6 +145,8 @@ def parse_and_execute(command, shell):
 		else: print("Server already running")
 	elif command == "loadscenario":
 		load_scenario()
+	elif command == "loadsave":
+		load_save()
 	elif command == "restart":
 		restart()
 	elif command == "update":
@@ -138,7 +159,6 @@ def parse_and_execute(command, shell):
 	else:
 		print("Unknown command: " + command)
 def start():
-	global cwd
 	global pid
 	global cmd
 	global mySocket
