@@ -4,7 +4,7 @@ while test $# -gt 0; do
     -h|--help)
         echo "Downloads and installs the factorio headless server binaries from the official webside www.factorio.com"
         echo "--update=VERSION       specify a version to install"
-        echo "--latest                     download the latest version"
+        echo "--latest               download the latest version"
         exit
         ;;
     --update)
@@ -27,6 +27,12 @@ while test $# -gt 0; do
         exit
   esac
 done
+
+if [ -z "$1" ]
+ then
+  echo "Try --help"
+  exit
+fi
 
 if [ -z "$VERSION" ]
   then
