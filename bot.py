@@ -9,6 +9,7 @@ import pyinotify
 import aiohttp
 import random
 from subprocess import Popen
+from time import gmtime, strftime
 
 # Open chatlog file
 chatlog_file = 'log/log.log'
@@ -35,6 +36,10 @@ lastpass = totp.now()
 # Store the candidate :D
 pending_ban = None
 
+def print_to_file(str):
+	with open(cwd + "/log/bot.log", "a") as f:
+		f.write(str + "\n")
+
 # Callback for chatlog monitor
 def handle_factorio_chat(notifier):
 	line = "".join(chatlog.readlines()).rstrip('\n').replace('\n', ' ')
@@ -42,6 +47,7 @@ def handle_factorio_chat(notifier):
 	if matches and matches.group(1) and matches.group(2):
 		event = matches.group(1)
 		msg = matches.group(2)
+		print_to_file(line)
 		notifier.loop.create_task(send_msg_to_discord(event, msg))
 
 # Init event loop for monitoring chatlog and discord events
@@ -77,7 +83,6 @@ async def send_msg_to_discord(event, msg):
 			await client.add_reaction(sent_msg, emo)
 	else:
 		await client.send_message(channel, msg)
-	
 
 def send_msg_to_game(username, msg):
 	msg = re.sub(r'[\n\r\\"\']', '', msg).strip()
@@ -85,6 +90,7 @@ def send_msg_to_game(username, msg):
 	if msg != '':
 		template = '/silent-command game.print("[%s@discord]: %s")' % (username, msg)
 		print("%s: %s" % (username, msg))
+		print_to_file("%s %s@discord: %s" % (strftime("%Y-%m-%d %X [CHAT]", gmtime()), username, msg))
 		sckt.sendto(template.encode(), dest)
 
 def spy(username):
