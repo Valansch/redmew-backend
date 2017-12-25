@@ -188,6 +188,7 @@ def start():
 			if x == 100:
 				line = get_update_users_command()
 				try:
+					print("/silent-command ", file=shell.stdin, flush=True)
 					print(line, file=shell.stdin, flush=True)
 				except BrokenPipeError:
 					restart()
