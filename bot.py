@@ -13,6 +13,8 @@ from time import gmtime, strftime
 
 # Open chatlog file
 chatlog_file = 'log/log.log'
+port_file_path = 'control_port'
+port_file = open(port_file_path, 'r')
 chatlog = open(chatlog_file, 'r')
 chatlog.seek(0, 2) # Go to the end of the file
 
@@ -50,12 +52,28 @@ def handle_factorio_chat(notifier):
 		print_to_file(line)
 		notifier.loop.create_task(send_msg_to_discord(event, msg))
 
+# Callback for port
+def handle_port_change(notifier):
+	port_file.seek(0,0)
+	line = "".join(port_file.readlines()).rstrip('\n').replace('\n', ' ')
+
+	global dest
+	dest=("localhost", int(line))
+
+	print("port changed to:" + line)
+
 # Init event loop for monitoring chatlog and discord events
 wm = pyinotify.WatchManager()
 loop = asyncio.get_event_loop()
 client = discord.Client(loop=loop)
-notifier = pyinotify.AsyncioNotifier(wm, loop, callback=handle_factorio_chat, default_proc_fun=lambda x: None)
+pyinotify.AsyncioNotifier(wm, loop, callback=handle_factorio_chat, default_proc_fun=lambda x: None)
 wm.add_watch(chatlog_file, pyinotify.IN_MODIFY)
+
+# 2nd watch manager for port file, can i use the same loop? i really only want to watch to file
+# with 2 different event handlers
+wm2 = pyinotify.WatchManager()
+pyinotify.AsyncioNotifier(wm2, loop, callback=handle_port_change, default_proc_fun=lambda x: None)
+wm2.add_watch(port_file_path, pyinotify.IN_MODIFY)
 
 def replace_mentions(match):
 	username = match.group(1)
