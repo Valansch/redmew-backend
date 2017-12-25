@@ -187,8 +187,10 @@ def start():
 			#Update users after 20 sec
 			if x == 100:
 				line = get_update_users_command()
-				print(line, file=shell.stdin, flush=True)
-
+				try:
+					print(line, file=shell.stdin, flush=True)
+				except BrokenPipeError:
+					restart()
 try:
 	start()
 except KeyboardInterrupt:
