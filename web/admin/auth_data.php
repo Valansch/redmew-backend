@@ -13,4 +13,5 @@ $auth_admins = array(
    "dinodod" => '$2y$10$m9yoPp54DrFkdig57ks0YOGBQ.14ydzjBN9hE6D3JjjKosjsBO1Qu',
    "air20" => '$2y$10$fdYjIe4SbHyueIAw6W81yuZUzm2fvbqH6XNbPisFNhHivZrpV5mFS',
    "sholvo" => '$2y$10$285KDr/OWdYizPfVhcf/yeeyYazYzgD45kztt2DJJQ9aeK4r1bNHu',
+   "redlabel" => '$2y$10$9aDcpDgXOezgy/SwCqgx2uycU.mszGCPdN4TfsOzA9.sK7U9rT8dC',
 );
