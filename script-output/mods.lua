@@ -4,4 +4,6 @@
 ["selen"] = "",
 ["sholvo"] = "",
 ["animal"] = "",
+["terarink"] = "",
+["theorangeangle"] = "",
 }
