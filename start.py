@@ -7,6 +7,7 @@ import sys
 import os
 import select
 import os.path
+import deflate
 
 pid = 0
 live_log = "./log/live.log"
@@ -93,20 +94,21 @@ def restart():
 	start()
 	sys.exit(0)
 
-def load_save():
+def load_save(file):
+	file = file.replace(" ", "")
+	if file == "":
+		file = "saves/_autosave1.zip"
+	file = os.path.join("./", file)
+	if not os.path.isfile(file):
+		print("File does not exist.")
+		return 0
 	stop()
 	for x in range(10000000):
 		time.sleep(1)
 		if is_stopped(): break
-	print("Loading ./web/admin/_autosave1.zip")
-	if not os.path.isfile("./web/admin/_autosave1.zip"):
-		run('echo "ERROR: Could not find file $PWD/web/admin/_autosave1.zip" >> ./log/live.log',shell=True)
-		print("file not found")
-		change_state_stopped()
-		sys.exit(0)
+	print("Loading " + file)
 
-	run("mv ./web/admin/_autosave1.zip ./saves/current_map.zip", shell=True)
-	run("touch ./saves/current_map.zip", shell=True)
+	deflate.clean_save(file, "./saves/current_map.zip")
 
 	global load_save_cmd
 	global cmd
@@ -144,8 +146,8 @@ def parse_and_execute(command, shell):
 		else: print("Server already running")
 	elif command == "loadscenario":
 		load_scenario()
-	elif command == "loadsave":
-		load_save()
+	elif command.find("loadsave") == 0:
+		load_save(command[8:])
 	elif command == "restart":
 		restart()
 	elif command == "update":
