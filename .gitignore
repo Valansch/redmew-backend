@@ -9,6 +9,7 @@ scenarios/
 backup/
 script-output/
 saves/
+log/
 temp/
 data/
 *.log
