@@ -15,4 +15,5 @@ $auth_admins = array(
    "sholvo" => '$2y$10$285KDr/OWdYizPfVhcf/yeeyYazYzgD45kztt2DJJQ9aeK4r1bNHu',
    "redlabel" => '$2y$10$9aDcpDgXOezgy/SwCqgx2uycU.mszGCPdN4TfsOzA9.sK7U9rT8dC',
    "i1728" => '$2y$10$qYq1NhJJPQ.A0/Q2EyCy/.yUQ4ToM/fTwEspdce8ZBPJVjDM4lpnC',
+   "grilledham" => '$2y$10$aEa8X7R/5g3.tv0CQT49WOlE98tKAjPrxgPmGyHcLy0l3bfNs6RDq',
 );
