@@ -14,8 +14,12 @@ def log(str):
 		f.write("[Save deflation] " + str + "\n")
 
 def parse_URI(line):
-    line = line.replace("(", " ").replace(")","").replace("\"","").replace(".","/").replace(" ", "")
-    line = line[(line.find("require") + 7):] + ".lua"
+    line = line.replace("(", "").replace(")"," ").replace("\"","").replace(".","/")
+    line = line[(line.find("require") + 7):].strip()
+    end_of_file_name = line.find(" ")
+    if end_of_file_name > -1:
+        line = line[:end_of_file_name]
+    line = line + ".lua"
     URI = dir_name + line
     if os.path.exists(URI) and URI not in inlcuded_files:
         inlcuded_files.append(URI)
@@ -78,7 +82,7 @@ def clean_save(save_name, output_name):
     add_excemptions()
     parse_file("control.lua")
     remove_unwanted_files()
-    zip(dir_name, save_name)
+    zip(dir_name, output_name)
     file_size_after = os.path.getsize(save_name)
     log("File size reduced by " + str(100 - math.floor(1000 * file_size_after / file_size_before)/10) + "%")
 
