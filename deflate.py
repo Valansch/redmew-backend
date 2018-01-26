@@ -1,4 +1,4 @@
-#!/usr/bin/python
+#!/usr/bin/python3
 import glob
 import os.path
 import zipfile
@@ -8,34 +8,45 @@ import math
 dir_name = ""
 inlcuded_files = []
 logfile = "./log/live.log"
+current_dir = ""
 
 def log(str):
+	return 0
 	with open(logfile, 'a') as f:
 		f.write("[Save deflation] " + str + "\n")
 
-def parse_URI(line):
-    line = line.replace("(", "").replace(")"," ").replace("\"","").replace(".","/")
+def parse_URI(line, cdir):
+    line = line.replace("(", "").replace(")"," ").replace("\"","").replace(".","/").replace("'", "")
     line = line[(line.find("require") + 7):].strip()
     end_of_file_name = line.find(" ")
     if end_of_file_name > -1:
         line = line[:end_of_file_name]
     line = line + ".lua"
+
+    #relative path
+    URI = cdir + line
+    if os.path.exists(URI) and URI not in inlcuded_files:
+        inlcuded_files.append(URI)
+        parse_file(URI)
+
+    #absolute path
     URI = dir_name + line
     if os.path.exists(URI) and URI not in inlcuded_files:
         inlcuded_files.append(URI)
-        parse_file(line)
+        parse_file(URI)
 
-def parse_line(line):
+def parse_line(line, cdir):
     if "require" in line:
         if not "--" in line or line.find("--") > line.find("require"):
-            parse_URI(line)
+            parse_URI(line, cdir)
 
 def parse_file(file_name):
-    f = open(dir_name + file_name, 'r')
+    cdir = os.path.dirname(file_name) + "/"
+    f = open(file_name, 'r')
     lines = f.readlines()
     f.close()
     for line in lines:
-        parse_line(line.rstrip())
+        parse_line(line.rstrip(), cdir)
 
 def unzip(save_name):
     global dir_name
@@ -80,7 +91,7 @@ def clean_save(save_name, output_name):
     file_size_before = os.path.getsize(save_name)
     unzip(save_name)
     add_excemptions()
-    parse_file("control.lua")
+    parse_file(dir_name + "control.lua")
     remove_unwanted_files()
     zip(dir_name, output_name)
     file_size_after = os.path.getsize(save_name)
