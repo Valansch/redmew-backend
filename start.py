@@ -195,6 +195,6 @@ def start():
 				except BrokenPipeError:
 					restart()
 try:
-	start()
+	change_state_stopped()
 except KeyboardInterrupt:
 	print("Bye.")
