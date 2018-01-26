@@ -9,7 +9,7 @@ import select
 import os.path
 import deflate
 
-pid = 0
+pid = 99999
 live_log = "./log/live.log"
 log = "./log/log.log"
 bind_arg = " --bind 5.9.164.209"
@@ -20,7 +20,7 @@ load_save_cmd = "./bin/x64/factorio --server-settings ./server-settings.json --s
 start_scenario_cmd = "./bin/x64/factorio --server-settings ./server-settings.json --start-server-load-scenario RedMew --console-log " + log + bind_arg
 cmd = load_save_cmd
 
-print("Controlpid: " + str(os.getpid()))
+print("Control pid: " + str(os.getpid()))
 port_number = os.getpid() + 32000 #i feel dirty
 mySocket = socket( AF_INET, SOCK_DGRAM )
 mySocket.bind(('localhost', port_number))
@@ -195,6 +195,9 @@ def start():
 				except BrokenPipeError:
 					restart()
 try:
+	print("Enter :start to load the latest save file.")
+	print("Enter :loadsave to load saves/_savefile1.zip.")
+	print("Enter :loadsave <path> to load a save file.")
 	change_state_stopped()
 except KeyboardInterrupt:
 	print("Bye.")
