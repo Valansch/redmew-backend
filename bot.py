@@ -11,7 +11,7 @@ import pyinotify
 import aiohttp
 import random
 from subprocess import Popen
-from time import gmtime, strftime
+from time import gmtime, strftime, sleep
 
 
 # Open chatlog file
@@ -25,8 +25,6 @@ channel = None
 # Init socket connection to factorio console
 PORT = 0
 cwd = os.path.dirname(os.path.abspath(__file__))
-bantype = "ban"
-
 
 with open(cwd + "/control_port", 'r') as f:
 	PORT = int(f.readlines()[0])
@@ -34,16 +32,6 @@ with open(cwd + "/control_port", 'r') as f:
 sckt = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
 dest=("localhost", PORT)
 
-# Read admin auth token for discord command execution
-# Init TOTP and remember most recent password
-ADMIN_TOKEN = ''
-with open(cwd + "/admin_secret", "r") as f:
-	ADMIN_TOKEN = f.readlines()[0].rstrip('\n')
-totp = pyotp.TOTP(ADMIN_TOKEN)
-lastpass = totp.now()
-
-# Store the candidate :D
-pending_ban = None
 
 class Command:
 	is_runable = False
@@ -56,14 +44,14 @@ class Command:
 		self.num_args = num_args
 		self.admin = admin
 
-	def run(self, msgid, admin):
+	async def run(self, msgid, admin):
 		if self.name == "help":
 			return commands.print_help()
-		#check credentials
+
 		if not admin and self.admin: raise RuntimeError("You don't have permission to run this command")	
 		if self.is_function:
-			first_fct_arg = '"' + str(msgid) + '",' if self.output else ","
-			template = "/silent-command " + self.name + '(' + first_fct_arg	
+			first_fct_arg = '"api/' + str(msgid) + '",' if self.output else ","
+			template = "/silent-command bot_command_" + self.name + '(' + first_fct_arg	
 			for i in range(1,self.num_args):
 				template = template + '"' + call[i] + '",'
 			template = template[:-1]
@@ -77,7 +65,7 @@ class Command:
 		while not os.path.isfile(filename):
 			if tries > api_response_timeout * 10:
 				return None
-			asyncio.sleep(0.1)
+			await asyncio.sleep(0.1)
 			tries +=1
 		response = ""
 		with open(filename, "r") as f:
@@ -120,11 +108,11 @@ class Commands:
 commands = Commands()
 commands.add(Command("help", "Prints this help text"))
 commands.add(Command("spy", "spys on a player", implemented=False, num_args=1, is_function = False))
-commands.add(Command("players", "lists all online players.",implemented=False, output=True))
+commands.add(Command("players", "lists all online players.", output=True))
 commands.add(Command("spy", "spies on a player.", is_function=False, num_args=1, admin=True))
 commands.add(Command("ban", "bans a player.", is_function=False, num_args=1 , admin=True))
 commands.add(Command("unban","unbans a player.", is_function=False, num_args=1, admin=True))
-commands.add(Command("time", "How lomg the server has been running.", implemented=False,is_function=False))
+commands.add(Command("time", "How lomg the server has been running.",is_function=True, output=True))
 
 def print_to_file(str):
 	with open(cwd + "/log/bot.log", "a") as f:
@@ -142,6 +130,7 @@ def handle_factorio_chat(notifier):
 
 # Callback for port
 def handle_port_change(notifier):
+	print("test")
 	port_file.seek(0,0)
 	line = "".join(port_file.readlines()).rstrip('\n').replace('\n', ' ')
 
@@ -157,6 +146,7 @@ client = discord.Client(loop=loop)
 pyinotify.AsyncioNotifier(wm, loop, callback=handle_factorio_chat, default_proc_fun=lambda x: None)
 wm.add_watch(chatlog_file, pyinotify.IN_MODIFY)
 
+#maybe i need another loop?
 # 2nd watch manager for port file, can i use the same loop? i really only want to watch to file
 # with 2 different event handlers
 wm2 = pyinotify.WatchManager()
@@ -182,10 +172,6 @@ async def send_msg_to_discord(event, msg):
 	if event == "JOIN":
 		embed = discord.Embed(title=msg.upper(), color=discord.Color(random.randint(0, 0xFFFFFF)))
 		embed.set_image(url="https://picsum.photos/400/300/?random")
-		# async with aiohttp.request('GET', 'http://random.cat/meow') as resp:
-		#	if resp.status == 200:
-		#		cat_img = await resp.json()
-		#		embed.set_image(url=cat_img["file"])
 		sent_msg = await client.send_message(channel, embed=embed)
 		emojis = random.sample(server.emojis, 3)
 		for emo in emojis:
@@ -226,12 +212,12 @@ async def on_message(message):
 			for role in message.author.roles:
 				if role.name == "admins": admin = True
 			try:
-				result = command.run(message.id, admin)
+				result = await command.run(message.id, admin)
 			except RuntimeError as e:
 				await client.send_message(message.channel, e)
 				return
 			if result is None:
-				await client.send_message(message.channel, "Server did not responde.")
+				await client.send_message(message.channel, "Server did not respond.")
 			elif not result == "":
 				await client.send_message(message.channel, result)
 
