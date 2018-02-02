@@ -69,7 +69,7 @@ class Command:
 			tries +=1
 		response = ""
 		with open(filename, "r") as f:
-			response = response + f.readline()
+			response = "".join(f.readlines())
 		print(response)
 		return response
 	
