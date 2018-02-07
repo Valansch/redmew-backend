@@ -1,5 +1,4 @@
 <?php
-
 if (!isset($_SERVER['PHP_AUTH_USER'])) {
    header('WWW-Authenticate: Basic realm="Redmew Admin Console"');
    header('HTTP/1.0 401 Unauthorized');
@@ -26,7 +25,6 @@ if (!$validated) {
   header('HTTP/1.0 401 Unauthorized');
   die ("Nope, no bueno");
 }
-
 ?>
 <html>
 <head>
@@ -49,7 +47,11 @@ if (!$validated) {
 
       $("#serverControl ul a").click(function (e) {
          e.preventDefault();
-
+         if ($(this).attr("id") == "upload_link") {
+	    e.preventDefault();
+            $("#upload_select").trigger('click');
+            return;
+	 }
          href = $(this).attr("href");
          $("#serverControl .output").load(href);
          $("#serverControl ul a").addClass("wait");
@@ -58,8 +60,7 @@ if (!$validated) {
          serverControlTimeout = window.setTimeout(reloadStatus, timePollControl);
 
       });
-
-      $("form").submit(function (e) {
+      $("#command_form").submit(function (e) {
          e.preventDefault();
          command = $("#command").val();
          if (command.charAt(0) != '/') {
@@ -74,6 +75,9 @@ if (!$validated) {
          });
          reloadConsole();
          $("#command").val("");
+      });
+      $("#upload_select").change(function (){
+        $("#btnUpload").click();	
       });
    });
 
@@ -119,21 +123,22 @@ if (!$validated) {
          $("#serverControl ul").show();
 
          if ( window.server_status.factorio_status == "Running" ) {
-            $("#factorioStart").hide();
+			$("#factorioStart").hide();
+            $("#factorioLoad").show();
             $("#factorioStop").show();
             $("#factorioRestart").show();
             $("#factorioUpdate").show();
             $("#factorioSave").show();
          } else {
             $("#factorioStart").show();
-            $("#factorioStop").hide();
+	    $("#factorioLoad").show();
+	    $("#factorioStop").hide();
             $("#factorioRestart").hide();
             $("#factorioUpdate").hide();
             $("#factorioSave").hide();
          }
       }
    }
-
    </script>
 </head>
 <body>
@@ -141,7 +146,6 @@ if (!$validated) {
 
    <div id="serverControl">
       <h2>Server Command and Control</h2>
-      <p>@TODO: Player Count / List</p>
       <dl>
          <dt>Control Script</dt>
          <dd id="controlPID"></dd>
@@ -160,7 +164,12 @@ if (!$validated) {
          <li id="factorioRestart"><a href="send-control.php?control=restart" class="btn btn-custom btn-large btn-block">Restart</a></li>
          <li id="factorioUpdate"><a href="send-control.php?control=update" class="btn btn-custom btn-large btn-block">Update</a></li>
          <li id="factorioSave"><a href="send-control.php?control=save" class="btn btn-custom btn-large btn-block">Save</a></li>
+         <li id="factorioLoad"><a href="" id="upload_link" class="btn btn-custom btn-large btn-block">Load</a></li>
       </ul>
+      <form id="upload_form" action="upload.php" method="post" enctype="multipart/form-data">
+          <input id="upload_select" type="file" name="fileToUpload" />
+         <input type="submit" value="Upload Image" name="submit" id="btnUpload" />
+       </form>
 
       <div class="output"></div>
 
@@ -174,7 +183,7 @@ if (!$validated) {
       <h2>Server Console</h2>
       [ <a href="console-log.php?all=all" target="_blank">Full Log</a> ]
       <div class="output"></div>
-      <form method="post" action="send-command.php">
+      <form id="command_form" method="post" action="send-command.php">
          <?php print $_SERVER['PHP_AUTH_USER']; ?>: <input type="text" autocomplete="off" id="command" name="command" />
          <input type="submit" value="Send" />
       </form>

@@ -79,3 +79,6 @@ input[type=submit] {
    color: #999;
    margin: 0;
 }
+#upload_form {
+    display:none;
+}
