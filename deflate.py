@@ -50,13 +50,14 @@ def parse_file(file_name):
 
 def unzip(save_name):
     global dir_name
-    dir_name = save_name[:save_name.find(".zip")] + "/"
+    dir_name = os.path.join(os.path.dirname(save_name),"temp")
     if os.path.isdir(dir_name):
         log("Deleting directory " + dir_name)
         shutil.rmtree(dir_name)
     zip_ref = zipfile.ZipFile(save_name, 'r')
-    zip_ref.extractall(os.path.dirname(save_name))
+    zip_ref.extractall(os.path.join(os.path.dirname(save_name), "temp"))
     zip_ref.close()
+    dir_name = os.path.join(dir_name, next(os.walk(dir_name))[1][0]) + "/"
 
 def zip(dir_name, save_name):
     to_zip = os.path.join(os.path.dirname(save_name), "to_zip")
