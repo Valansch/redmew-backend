@@ -42,9 +42,15 @@ def parse_line(line, cdir):
 
 def parse_file(file_name):
     cdir = os.path.dirname(file_name) + "/"
-    f = open(file_name, 'r')
-    lines = f.readlines()
-    f.close()
+    try:
+        f = open(file_name, 'r')        
+        lines = f.readlines()
+        f.close()
+
+    except KeyboardInterrupt as e:
+        sys.exit(0)
+    except Exception as e:
+        print(e)
     for line in lines:
         parse_line(line.rstrip(), cdir)
 

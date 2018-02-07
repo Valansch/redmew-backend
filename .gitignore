@@ -3,6 +3,7 @@
 *.zip
 *.json
 *cfg
+__pycache__/
 config/
 bin/
 scenarios/

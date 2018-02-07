@@ -107,10 +107,7 @@ def load_save(file):
 		time.sleep(1)
 		if is_stopped(): break
 	print("Loading " + file)
-
 	deflate.clean_save(file, "./saves/current_map.zip")
-
-	global load_save_cmd
 	global cmd
 	cmd = load_save_cmd
 	start()
