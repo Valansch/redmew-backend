@@ -18,4 +18,5 @@ $auth_admins = array(
    "grilledham" => '$2y$10$aEa8X7R/5g3.tv0CQT49WOlE98tKAjPrxgPmGyHcLy0l3bfNs6RDq',
    "xatev" => '$2y$10$u0IRCDU97PJtyHX/BgJ8XOALPoEL80oDIHajqxDixrRbz7FEq4Z.u',
    "cybernoise" => '$2y$10$f3VcI6Wcgr6O2g8vIiLpNujHrhMdjzpjGcLLm7O72MM5qmMwQvp3.',
+   "slug" => '$2y$10$dqly4AX3aIEJQQbJwTVY7uMGMbBXAE8OJI2X0T2Rdr30nG.74Z5kK',
 );
