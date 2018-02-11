@@ -97,7 +97,17 @@ class FactorioServer {
    public function sendCommand($command) {
       $this->_sendControl($command);
    }
-
+   
+   public function sendDescription($json) {
+      $file = $this->cwd . "/server-settings.json";
+      $data = file_get_contents($file);   
+      $data = json_decode($data, true);
+      $data["name"] = $json["name"];
+      $data["description"] = $json["description"];
+      $data["tags"] = $json["tags"];
+      $contents = str_replace("\\/","/",json_encode($data, JSON_PRETTY_PRINT));
+      file_put_contents($file, $contents);
+ }
    public function getLog($lines = 20) {
       $output_tmp = "/tmp/current_log_output.log";
       $command = "tail " . $this->cwd . $this->_log_dir . $this->_log_name . " --lines " . $lines . " > " . $output_tmp;
@@ -113,11 +123,8 @@ class FactorioServer {
    }
 
    public function helpTMux() {
-return "tmux new -s dev
-ctrl + B
-:split-window -v
-tail -f log/live.log
-ctrl + B + arrow-up
+return "tmux a -t live
+Ctrl + B + arrow up
 " . $this->cwd . "/start.py";
 
    }

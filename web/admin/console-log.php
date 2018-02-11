@@ -27,7 +27,10 @@ if ( isset($_GET["all"] ) ) {
    fpassthru($fp);
 
 } else {
-   $currentLog = $Server->getLog();
+   $lines = 20;;
+   if (isset($_GET["lines"])) $lines = (int)$_GET[lines];
+   
+   $currentLog = $Server->getLog($lines);
    print implode("<br />", explode( "\n", $currentLog) );
 
 }

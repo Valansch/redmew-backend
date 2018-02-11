@@ -39,12 +39,44 @@ if (!$validated) {
    var serverConsoleTimeout = null
    var timePollControl = 5000;
    var timePollConsole = 3000;
-
+   var description_open = false;
    $(document).ready(function () {
       reloadStatus();
       reloadConsole();
       $("#command").focus();
-
+      $("#description").hide();
+      $("#saveDescriptionBox").hide();
+      $("#toggle_description").click(function (e) {
+         e.preventDefault();
+	 if (description_open) {
+	    $("#toggle_description").text("Edit Description");
+	    $("#saveDescriptionBox").hide();
+	    $("#description").hide();
+	} else {
+	    $("#toggle_description").text("Cancel");
+	    $("#saveDescriptionBox").show();
+	    $("#description").show();
+	    loadDescription();
+	}
+	description_open = ! description_open;
+      });
+      $("#saveDescription").click(function (e) {
+         var description = $("#description").html();
+	 $.ajax({
+           type: "POST",
+           url: "send-description.php",
+           data: {description : description},
+	   success: function(html) { 
+	      if (html != "") {
+	         alert(html);
+              } else {
+                 $("#toggle_description").click();   
+                 reloadStatus();
+	      }
+	   },
+           error: function(error) {console.log(error);}
+	});
+      });
       $("#serverControl ul a").click(function (e) {
          e.preventDefault();
          if ($(this).attr("id") == "upload_link") {
@@ -84,6 +116,16 @@ if (!$validated) {
    function serverControlButtonEnable() {
       $("#serverControl ul a").removeClass("wait");
    }
+   function loadDescription() {
+      $.getJSON("status.php", function (json) {
+         $("#description").html(
+            '{<br/>&nbsp;&nbsp;"name": "' + json.serverSettings.name + '",<br/>' + 
+	    '&nbsp;&nbsp;"description": "' + json.serverSettings.description + '", <br/>' +
+            '&nbsp;&nbsp;"tags": [<br/>&nbsp;&nbsp;&nbsp;&nbsp;"' + 
+	       json.serverSettings.tags.join('",<br/>&nbsp;&nbsp;&nbsp;&nbsp;"') + 
+	     '"<br/>&nbsp;&nbsp;]<br/>}' 
+         );});
+   }
 
    function reloadStatus() {
       window.clearTimeout(serverControlTimeout);
@@ -99,8 +141,12 @@ if (!$validated) {
 
    function reloadConsole() {
       window.clearTimeout(serverConsoleTimeout);
-
-      $("#console .output").load("console-log.php", function () {
+      var lines = parseInt($("#numLines").html());
+      var url = "console.log.php";
+      if (!isNaN(lines)) {
+        url = "console-log.php?lines=" + lines
+      }
+      $("#console .output").load(url, function () {
          $(this).scrollTop($(this)[0].scrollHeight);
          serverConsoleTimeout = window.setTimeout(reloadConsole, timePollConsole);
       });
@@ -129,6 +175,7 @@ if (!$validated) {
             $("#factorioRestart").show();
             $("#factorioUpdate").show();
             $("#factorioSave").show();
+	    $("#descriptionBox").show();
          } else {
             $("#factorioStart").show();
 	    $("#factorioLoad").show();
@@ -136,6 +183,7 @@ if (!$validated) {
             $("#factorioRestart").hide();
             $("#factorioUpdate").hide();
             $("#factorioSave").hide();
+	    $("#descriptionBox").hide();
          }
       }
    }
@@ -169,20 +217,27 @@ if (!$validated) {
       <form id="upload_form" action="upload.php" method="post" enctype="multipart/form-data">
           <input id="upload_select" type="file" name="fileToUpload" />
          <input type="submit" value="Upload Image" name="submit" id="btnUpload" />
-       </form>
+      </form>
 
-      <div class="output"></div>
 
       <div id="help-StartTMux">
          <strong>Server control session not found. Please start the tmux using:</strong>
          <xmp></xmp>
       </div>
    </div>
-
+   <div id = "description_box">
+      <h3>
+         [<a id="toggle_description" href="#">Edit Description</a>]
+	 <div style="display: inline" id="saveDescriptionBox">[<a id="saveDescription" href="#">Save</a>]</div>
+      </h3>
+      <div contentEditable class="text_box" id="description"></div>
+   </div>
    <div id="console">
       <h2>Server Console</h2>
-      [ <a href="console-log.php?all=all" target="_blank">Full Log</a> ]
-      <div class="output"></div>
+      [ <a href="console-log.php?all=all" target="_blank">Full Log</a> ]  
+      [ Lines: <div contentEditable class="text_box lines" id="numLines">20</div> ]
+      <p></p>
+      <div class="output text_box"></div>
       <form id="command_form" method="post" action="send-command.php">
          <?php print $_SERVER['PHP_AUTH_USER']; ?>: <input type="text" autocomplete="off" id="command" name="command" />
          <input type="submit" value="Send" />

@@ -24,12 +24,17 @@ div {
 
 }
 
-#console .output  {
+.text_box {
    border: 1px solid #999;
    padding: 10px;
    overflow-x: scroll;
    white-space: nowrap;
    background: #000;
+}
+
+.lines {
+   display: inline;
+   padding: 2px;
 }
 
 #help-StartTMux { display: none;}
