@@ -109,10 +109,10 @@ commands = Commands()
 commands.add(Command("help", "Prints this help text"))
 commands.add(Command("spy", "spys on a player", implemented=False, num_args=1, is_function = False))
 commands.add(Command("players", "lists all online players.", output=True))
-commands.add(Command("spy", "spies on a player.", is_function=False, num_args=1, admin=True))
 commands.add(Command("ban", "bans a player.", is_function=False, num_args=1 , admin=True))
 commands.add(Command("unban","unbans a player.", is_function=False, num_args=1, admin=True))
-commands.add(Command("time", "How lomg the server has been running.",is_function=True, output=True))
+commands.add(Command("time", "How long the server has been running.",is_function=True, output=True))
+commands.add(Command("poll", "shows current poll status.",is_function=True, output=True))
 
 def print_to_file(str):
 	with open(cwd + "/log/bot.log", "a") as f:
@@ -171,7 +171,8 @@ async def send_msg_to_discord(event, msg):
 		channel = discord.Object(id='356780115159547914') # ingame-chat
 	if event == "JOIN":
 		embed = discord.Embed(title=msg.upper(), color=discord.Color(random.randint(0, 0xFFFFFF)))
-		embed.set_image(url="https://picsum.photos/400/300/?random")
+
+		embed.set_image(url=("https://picsum.photos/400/300/?image=" + str(random.randint(0,1084))))
 		sent_msg = await client.send_message(channel, embed=embed)
 		emojis = random.sample(server.emojis, 3)
 		for emo in emojis:
