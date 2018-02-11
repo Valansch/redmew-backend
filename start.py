@@ -168,13 +168,19 @@ def start():
 		for x in range(100000000):
 			#Check for input every 0.1 sec
 			#stdin
-			if select.select([sys.stdin], [], [], 0.1)[0]:
-				line = sys.stdin.readline()
-				if len(line) > 0:
-					if line[0] == ":":
-						parse_and_execute(line[1:], shell)
-					else:
-						print(line, file=shell.stdin, flush=True)
+			if is_stopped():
+				change_state_stopped()
+				sys.exit(0)
+			try:
+				if select.select([sys.stdin], [], [], 0.1)[0]:
+					line = sys.stdin.readline()
+					if len(line) > 0:
+						if line[0] == ":":
+							parse_and_execute(line[1:], shell)
+						else:
+							print(line, file=shell.stdin, flush=True)
+			except BrokenPipeError:
+                            change_state_stopped()
 			#external cmd
 			if select.select([mySocket], [], [], 0.1)[0]:
 				(data, _) = mySocket.recvfrom(16384)
