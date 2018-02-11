@@ -100,6 +100,10 @@
     "address": "82.13.11.149"
   },
   {
+    "username": "fpstristen",
+    "address": "66.169.34.30"
+  },
+  {
     "username": "fuckoffmate",
     "reason": "heavy griefing"
   },
@@ -250,6 +254,10 @@
     "address": "178.85.191.46"
   },
   {
+    "username": "nexarius",
+    "address": "31.19.65.241"
+  },
+  {
     "username": "nibbles7",
     "reason": "griefing"
   },
@@ -288,8 +296,18 @@
     "address": "86.90.58.146"
   },
   {
+    "username": "smithsteel",
+    "reason": "Slowgriefing for 2h never unban - valansch",
+    "address": "0.0.0.0"
+  },
+  {
     "username": "spafindoople",
     "reason": "removed many belts, left - 2017-11-9 valansch",
+    "address": "0.0.0.0"
+  },
+  {
+    "username": "stale2001",
+    "reason": "lazy bastard",
     "address": "0.0.0.0"
   },
   {
@@ -352,6 +370,11 @@
   {
     "username": "zechszero",
     "reason": "greif power, stole pimps --slug-",
+    "address": "0.0.0.0"
+  },
+  {
+    "username": "zlecktov",
+    "reason": "\"Cutting bus -05.02 2018 Valansch\"",
     "address": "0.0.0.0"
   },
   "zr4g0n"
