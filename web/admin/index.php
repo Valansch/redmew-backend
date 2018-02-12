@@ -85,7 +85,7 @@ if (!$validated) {
             return;
 	 }
          href = $(this).attr("href");
-         $("#serverControl .output").load(href);
+         $("#dummy_output").load(href);
          $("#serverControl ul a").addClass("wait");
 
          window.clearTimeout(serverControlTimeout);
@@ -232,6 +232,7 @@ if (!$validated) {
       </h3>
       <div contentEditable class="text_box" id="description"></div>
    </div>
+   <div id="dummy_output"></div>
    <div id="console">
       <h2>Server Console</h2>
       [ <a href="console-log.php?all=all" target="_blank">Full Log</a> ]  
