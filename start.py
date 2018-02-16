@@ -20,11 +20,18 @@ load_save_cmd = "./bin/x64/factorio --server-settings ./server-settings.json --s
 start_scenario_cmd = "./bin/x64/factorio --server-settings ./server-settings.json --start-server-load-scenario RedMew --console-log " + log + bind_arg
 cmd = load_save_cmd
 
-print("Control pid: " + str(os.getpid()))
+def log(msg):
+    msg = time.strftime("%Y-%m-%d %H:%M:%S: ") + str(msg)
+    print(msg)
+    with open("./log/python.log", 'a') as f:
+        f.write(msg + "\n")
+
+
+log("Starting script")
+log("Control pid: " + str(os.getpid()))
 port_number = os.getpid() + 32000 #i feel dirty
 mySocket = socket( AF_INET, SOCK_DGRAM )
 mySocket.bind(('localhost', port_number))
-
 
 with open("./control_pid", 'w') as f:
     f.write(str(os.getpid()))
@@ -55,12 +62,13 @@ def is_stopped():
     return False # no error, we can send a signal to the process
 
 def update():
-    print("Updating")
+    log("Updating")
     run("./install.sh --latest", shell=True)
+    log("Update finished")
 
 def stop():
     if not is_stopped():
-        print("Stopping server")
+        log("Stopping server")
         run("kill " + str(pid), shell=True)
 
 def update_external_pid():
@@ -90,7 +98,7 @@ def restart():
     for x in range(10000000):
         time.sleep(1)
         if is_stopped(): break
-    print("Loading latest save file")
+    log("Loading latest save file")
     start()
     sys.exit(0)
 
@@ -100,13 +108,13 @@ def load_save(file):
         file = "saves/_autosave1.zip"
     file = os.path.join("./", file)
     if not os.path.isfile(file):
-        print("File does not exist.")
+        log("File does not exist.")
         return 0
     stop()
     for x in range(10000000):
         time.sleep(1)
         if is_stopped(): break
-    print("Loading " + file)
+    log("Loading " + file)
     deflate.clean_save(file, "./saves/current_map.zip")
     global cmd
     cmd = load_save_cmd
@@ -118,7 +126,7 @@ def load_scenario():
     for x in range(10000000):
         time.sleep(1)
         if is_stopped(): break
-    print("Loading scenario RedMew")
+    log("Loading scenario RedMew")
     global start_scenario_cmd
     global cmd
     cmd = start_scenario_cmd
@@ -126,11 +134,12 @@ def load_scenario():
     sys.exit(0)
 
 def parse_and_execute(command, shell):
+    log("Received command " + command)
     command = command.rstrip("\n")
     if command == "":
         pass
     elif command == "stop":
-        if is_stopped(): print("Server is already stopped")
+        if is_stopped(): log("Server is already stopped")
         else:
             stop()
             change_state_stopped()
@@ -140,7 +149,7 @@ def parse_and_execute(command, shell):
             global cmd
             cmd = load_save_cmd
             start()
-        else: print("Server already running")
+        else: log("Server already running")
     elif command == "loadscenario":
         load_scenario()
     elif command.find("loadsave") == 0:
@@ -155,32 +164,35 @@ def parse_and_execute(command, shell):
         if shell:
             print("/silent-command game.server_save()", file=shell.stdin, flush=True)
     else:
-        print("Unknown command: " + command)
+        log("Unknown command: " + command)
 def start():
     global pid
     global cmd
     global mySocket
 
-    print("Starting server with info " + cmd)
+    log("Starting server with info " + cmd)
     with Popen(cmd + " >> " + live_log, shell=True, stdin=PIPE, bufsize=1, universal_newlines=True) as shell:
         pid = shell.pid + 2
         update_external_pid()
         for x in range(100000000):
             #Check for input every 0.1 sec
             #stdin
-            if select.select([sys.stdin], [], [], 0.1)[0]:
-                line = sys.stdin.readline()
-                if len(line) > 0:
-                    if line[0] == ":":
-                        parse_and_execute(line[1:], shell)
-                    else:
-                        try:
+            if x > 50 and is_stopped():
+                log("Crash detected")
+                restart()
+                sys.exit(0)
+            try:
+                if select.select([sys.stdin], [], [], 0.1)[0]:
+                    line = sys.stdin.readline()
+                    if len(line) > 0:
+                        if line[0] == ":":
+                            parse_and_execute(line[1:], shell)
+                        else:
                             print(line, file=shell.stdin, flush=True)
-                        except BrokenPipeError:
-                            print("Broken pipe")
-                            stop() # in case the server is still running
-                            change_state_stopped()
-            #external cmd
+            except BrokenPipeError:
+                log("Broken pipe")
+                restart()
+                sys.exit(0)
             if select.select([mySocket], [], [], 0.1)[0]:
                 (data, _) = mySocket.recvfrom(16384)
                 line = data.decode('UTF-8')
@@ -202,4 +214,4 @@ try:
     print("Enter :loadsave <path> to load a save file.")
     change_state_stopped()
 except KeyboardInterrupt:
-    print("Bye.")
+    log("Bye.")
