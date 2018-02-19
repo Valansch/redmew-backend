@@ -10,6 +10,7 @@ import pyotp
 import pyinotify
 import aiohttp
 import random
+import luafunctions
 from subprocess import Popen
 from time import gmtime, strftime, sleep
 
@@ -24,9 +25,9 @@ api_response_timeout = 3 # seconds
 channel = None
 # Init socket connection to factorio console
 PORT = 0
-cwd = os.path.dirname(os.path.abspath(__file__))
+cwd = os.path.dirname(os.path.abspath(__file__)) + "/../"
 
-with open(cwd + "/control_port", 'r') as f:
+with open(cwd + "control_port", 'r') as f:
 	PORT = int(f.readlines()[0])
 	print("Port: " + str(PORT))
 sckt = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
@@ -51,7 +52,7 @@ class Command:
 		if not admin and self.admin: raise RuntimeError("You don't have permission to run this command")	
 		if self.is_function:
 			first_fct_arg = '"api/' + str(msgid) + '",' if self.output else ","
-			template = "/silent-command bot_command_" + self.name + '(' + first_fct_arg	
+			template = "/silent-command " + getattr(luafunctions, self.name) + " " + self.name + '(' + first_fct_arg	
 			for i in range(1,self.num_args):
 				template = template + '"' + call[i] + '",'
 			template = template[:-1]
@@ -60,7 +61,7 @@ class Command:
 			template = "/" + " ".join(self.args)
 		sckt.sendto(template.encode(), dest)
 		if not self.output: return ""			
-		filename = cwd + "/script-output/api/" + str(msgid)
+		filename = cwd + "script-output/api/" + str(msgid)
 		tries = 0
 		while not os.path.isfile(filename):
 			if tries > api_response_timeout * 10:
@@ -115,7 +116,7 @@ commands.add(Command("time", "How long the server has been running.",is_function
 commands.add(Command("poll", "shows current poll status.",is_function=True, output=True))
 
 def print_to_file(str):
-	with open(cwd + "/log/bot.log", "a") as f:
+	with open(cwd + "log/bot.log", "a") as f:
 		f.write(str + "\n")
 
 # Callback for chatlog monitor
