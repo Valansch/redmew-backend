@@ -159,7 +159,6 @@ if (!$validated) {
       $("#factorioName").html( window.server_status.serverSettings.name );
       $("#factorioDescription").html( window.server_status.serverSettings.description );
       $("#factorioTags").html( window.server_status.serverSettings.tags.join("<br />") );
-
       if ( window.server_status.control_status != "Running") {
          $("#help-StartTMux").show();
          $("#help-StartTMux xmp").load("help.php?topic=tmux");
@@ -180,8 +179,8 @@ if (!$validated) {
             $("#factorioStart").show();
 	    $("#factorioLoad").show();
 	    $("#factorioStop").hide();
+	    $("#factorioUpdate").show();
             $("#factorioRestart").hide();
-            $("#factorioUpdate").hide();
             $("#factorioSave").hide();
 	    $("#descriptionBox").hide();
          }
