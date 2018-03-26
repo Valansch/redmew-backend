@@ -13,7 +13,7 @@ import random
 import luafunctions
 from subprocess import Popen
 from time import gmtime, strftime, sleep
-
+from discord.utils import find
 
 # Open chatlog file
 chatlog_file = 'log/log.log'
@@ -48,7 +48,8 @@ class Command:
 	async def run(self, msgid, admin):
 		if self.name == "help":
 			return commands.print_help()
-
+		if self.name == "bazul": 
+			return ":heart:"
 		if not admin and self.admin: raise RuntimeError("You don't have permission to run this command")	
 		if self.is_function:
 			first_fct_arg = '"api/' + str(msgid) + '",' if self.output else ","
@@ -108,12 +109,15 @@ class Commands:
  
 commands = Commands()
 commands.add(Command("help", "Prints this help text"))
+commands.add(Command("bazul", ":heart:"))
 commands.add(Command("spy", "spys on a player", implemented=False, num_args=1, is_function = False))
 commands.add(Command("players", "lists all online players.", output=True))
 commands.add(Command("ban", "bans a player.", is_function=False, num_args=1 , admin=True))
 commands.add(Command("unban","unbans a player.", is_function=False, num_args=1, admin=True))
+commands.add(Command("kick","kicks a player.", is_function=False, num_args=1, admin=True))
 commands.add(Command("time", "How long the server has been running.",is_function=True, output=True))
 commands.add(Command("poll", "shows current poll status.",is_function=True, output=True))
+commands.add(Command("rockets", "shows how many rockets have been launched", is_function=True, output=True));
 
 def print_to_file(str):
 	with open(cwd + "log/bot.log", "a") as f:
@@ -157,8 +161,8 @@ wm2.add_watch(port_file_path, pyinotify.IN_MODIFY)
 def replace_mentions(match):
 	username = match.group(1)
 	server = client.get_server('312150126766456832') # redmew server
-	member = server.get_member_named(username)
-	if member != None:
+	member = find(lambda m: m.name.lower() == username.lower(), server.members)
+	if member is not None:
 		return member.mention
 	else:
 		return match.group(0)
@@ -170,7 +174,7 @@ async def send_msg_to_discord(event, msg):
 	global channel
 	if not channel:
 		channel = discord.Object(id='356780115159547914') # ingame-chat
-	if event == "JOIN":
+	if event == "JOIND": #remove the D to reanble this feature
 		embed = discord.Embed(title=msg.upper(), color=discord.Color(random.randint(0, 0xFFFFFF)))
 
 		embed.set_image(url=("https://picsum.photos/400/300/?image=" + str(random.randint(0,1084))))
