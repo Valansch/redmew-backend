@@ -34,6 +34,11 @@
     "address": "1.123.7.98"
   },
   {
+    "username": "backfischla",
+    "reason": "tried to decon the base, removed poles, belts -Valansch 25.03.2018",
+    "address": "84.184.127.227"
+  },
+  {
     "username": "ballisticgamer04",
     "reason": "griefed coal belts - i1728 & sholvo",
     "address": "0.0.0.0"
@@ -65,6 +70,7 @@
     "reason": "griefing",
     "address": "73.73.135.246"
   },
+  "coaltrain",
   {
     "username": "colonizor",
     "reason": "antagonizing other players, killing dinodod, abusing polls, trying to get admins to ban people, etc -- i1728",
@@ -94,6 +100,10 @@
     "reason": "copper explosion bullshit"
   },
   {
+    "username": "deltanedas",
+    "address": "5.134.95.67"
+  },
+  {
     "username": "dwsx04",
     "reason": "Griefed the server for 2 hours, removed over 400 entities, placed another 400. Never unban 2017-11-09 -Valansch",
     "address": "0.0.0.0"
@@ -102,6 +112,10 @@
     "username": "ffin",
     "reason": "griefer",
     "address": "82.13.11.149"
+  },
+  {
+    "username": "fnopp",
+    "address": "174.114.178.106"
   },
   {
     "username": "fpstristen",
@@ -129,6 +143,10 @@
     "username": "gentz",
     "reason": "Damaged 7 entities with artillery-targeting-remote. This action was performed automatically. If you want to contest this ban please visit redmew.com/discord.",
     "address": "173.181.46.183"
+  },
+  {
+    "username": "goalie7960",
+    "address": "75.99.174.218"
   },
   {
     "username": "gondolas",
@@ -181,6 +199,11 @@
   {
     "username": "karljohnson",
     "address": "95.90.211.111"
+  },
+  {
+    "username": "karlkarl",
+    "reason": "byebye",
+    "address": "81.170.236.12"
   },
   {
     "username": "kclemens",
@@ -310,6 +333,10 @@
     "address": "0.0.0.0"
   },
   {
+    "username": "stale200",
+    "reason": "griefer"
+  },
+  {
     "username": "stale2001",
     "reason": "lazy bastard",
     "address": "0.0.0.0"
@@ -357,6 +384,10 @@
     "username": "tyrin91",
     "reason": "nazi",
     "address": "73.117.35.207"
+  },
+  {
+    "username": "valansch",
+    "address": "0.0.0.0"
   },
   {
     "username": "vinnidermaster",
