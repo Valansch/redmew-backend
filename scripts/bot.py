@@ -3,6 +3,7 @@
 
 import socket
 import re
+import sys
 import os
 import discord
 import asyncio
@@ -24,6 +25,8 @@ chatlog.seek(0, 2) # Go to the end of the file
 api_response_timeout = 3 # seconds
 channel = None
 # Init socket connection to factorio console
+server_id  = '432567222481846283'
+channel_id = '432641337834078229'
 PORT = 0
 cwd = os.path.dirname(os.path.abspath(__file__)) + "/../"
 
@@ -71,7 +74,7 @@ class Command:
 			tries +=1
 		response = ""
 		with open(filename, "r") as f:
-			response = "".join(f.readlines())
+			response = "".join(f.readlines()).replace(";", "\n")
 		print(response)
 		return response
 	
@@ -160,7 +163,7 @@ wm2.add_watch(port_file_path, pyinotify.IN_MODIFY)
 
 def replace_mentions(match):
 	username = match.group(1)
-	server = client.get_server('312150126766456832') # redmew server
+	server = client.get_server(server_id) # redmew server
 	member = find(lambda m: m.name.lower() == username.lower(), server.members)
 	if member is not None:
 		return member.mention
@@ -170,10 +173,10 @@ def replace_mentions(match):
 async def send_msg_to_discord(event, msg):
 	print(msg)
 	msg = re.sub(r"@(\S+)", replace_mentions, msg)
-	server = client.get_server('312150126766456832') # redmew server
+	server = client.get_server(server_id) # redmew server
 	global channel
 	if not channel:
-		channel = discord.Object(id='356780115159547914') # ingame-chat
+		channel = client.get_channel(channel_id) #discord.Object(id='432641337834078229') # ingame-chat
 	if event == "JOIND": #remove the D to reanble this feature
 		embed = discord.Embed(title=msg.upper(), color=discord.Color(random.randint(0, 0xFFFFFF)))
 
@@ -206,7 +209,7 @@ async def on_ready():
 async def on_message(message):
 	global pending_ban
 	global lastpass
-	if message.channel.name == 'ingame-chat' and not message.author.bot:
+	if message.channel.id == channel_id and not message.author.bot:
 		if message.clean_content.startswith("/"):
 			print(message.author.name + ": " + message.clean_content)
 			try:
@@ -216,7 +219,7 @@ async def on_message(message):
 				return
 			admin = False
 			for role in message.author.roles:
-				if role.name == "admins": admin = True
+				if "admin" in role.name: admin = True
 			try:
 				result = await command.run(message.id, admin)
 			except RuntimeError as e:
@@ -230,5 +233,18 @@ async def on_message(message):
 			return
 		send_msg_to_game(message.author.name, message.clean_content)
 
+	elif message.clean_content.startswith("/"):
+		try:
+			command = commands.parse(message.clean_content[1:])
+		except SyntaxError as e:	
+			return
+		await client.send_message(message.channel, "Commands are only available in the " + client.get_channel(channel_id).name + " channel.")
 # Run the event loop
-client.run('MzU2NTQ2MDI5MDY5NDAyMTE0.DOCnIQ.b25HdFO_9Uz34ose41aen4Oa4AM')
+
+while True:
+	try:
+		client.run('MzU2NTQ2MDI5MDY5NDAyMTE0.DOCnIQ.b25HdFO_9Uz34ose41aen4Oa4AM')
+	except ConnectionResetError:
+		pass
+	except RuntimeError:
+		sys.exit(0)
