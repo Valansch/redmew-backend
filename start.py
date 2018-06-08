@@ -39,19 +39,14 @@ with open("./control_port", 'w') as f:
     f.write(str(os.getpid() + 32000))
 
 def get_update_users_command():
-    regulars    = "./script-output/regulars.lua"
-    mods    = "./script-output/mods.lua"
+    regulars = "./script-output/regulars.lua" 
     print("Updating users")
-    cmd = " global.regulars = "
+    cmd = "/silent-command global.regulars = "
     if not os.path.isfile(regulars):
         return "/silent-command log('Updating regulars failed. Missing file: " + regulars + "')"
-    if not os.path.isfile(mods):
-        return "/silent-command log('Updating regulars failed. Missing file: " + mods + "')"
     with open(regulars, 'r') as f:
         cmd = cmd + f.read().replace('\n', ' ')
-    with open(mods, 'r') as f:
-        cmd = f.read().replace('\n', ' ') + cmd
-    return "/silent-command global.mods = " + cmd
+    return cmd
 
 def is_stopped():
     global pid
