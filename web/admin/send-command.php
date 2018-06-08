@@ -13,3 +13,4 @@ if (  ! empty( $command) ) {
    print $Server->sendCommand( $command );
 
 }
+?>

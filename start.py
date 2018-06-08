@@ -98,10 +98,10 @@ def restart():
     sys.exit(0)
 
 def load_save(file):
-    file = file.replace(" ", "")
+    file = file.strip()
     if file == "":
         file = "saves/_autosave1.zip"
-    file = os.path.join("./", file)
+    file = os.path.join("./", file) 
     if not os.path.isfile(file):
         log("File does not exist.")
         return 0

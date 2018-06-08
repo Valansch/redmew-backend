@@ -92,14 +92,14 @@ if (!$validated) {
          serverControlTimeout = window.setTimeout(reloadStatus, timePollControl);
 
       });
-      $("#command_form").submit(function (e) {
-         e.preventDefault();
+      $("#command_form").submit(function (e) { 
+	 e.preventDefault();
          command = $("#command").val();
-         if (command.charAt(0) != '/') {
+         if (command.charAt(0) != '/' && command.charAt(0) != ':') {
             name = '<?php print $_SERVER['PHP_AUTH_USER']; ?>';
             var msg = "'[" + name + "@Server]: " + command + "'";
             command = "/silent-command game.print(" + msg +  ")  log(" + msg + ")";
-         }
+         } 
          $.ajax({
            type: "POST",
            url: $(this).attr("action"),
