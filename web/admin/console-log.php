@@ -3,6 +3,13 @@
  * Reads the status of the server, and returns a JSON array
  * @TODO -- Make it do that!
  */
+ 
+if (!isset($_SERVER['PHP_AUTH_USER'])) {
+header('WWW-Authenticate: Basic realm="Redmew Admin Console"');
+header('HTTP/1.0 401 Unauthorized');
+die('You\'re going to need to go ahead and authenticate');
+}
+
 
  include("factorioserver.php");
 
