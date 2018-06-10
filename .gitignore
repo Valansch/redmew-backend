@@ -18,3 +18,4 @@ status
 *pid*
 *port*
 admin_secret
+restart
