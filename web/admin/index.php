@@ -32,7 +32,7 @@ if (!$validated) {
    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
    <link rel="stylesheet" type="text/css" href="factorio.css">
    <link rel="stylesheet" type="text/css" href="redmew.css">
-   <meta name='viewport' content='width=device-width, initial-scale=1'>
+
 	
    <script type="text/javascript">
    // var window.server_status;
@@ -134,6 +134,10 @@ if (!$validated) {
 	}
       });
 
+      $("#upload").click(function(e) {
+        $("#upload_load").val("false");
+      	$("#upload_select").trigger('click');
+      });
       $("#renameSel").click(function (e){
      	var newname = prompt("Choose a new name for " + saves[selectedSave]["name"])
 	if (newname && newname.trim() != "")
@@ -150,7 +154,7 @@ if (!$validated) {
 	   	if (e.trim() != "") {
 	   		alert(e);
 		}
-	        reloadSaveSelection();	
+	        window.setTimeout(reloadSaveSelection, 100);	
 	   }
          });
    }
@@ -274,15 +278,22 @@ if (!$validated) {
       $("#factorioDescription").html( window.server_status.serverSettings.description );
       $("#factorioTags").html( window.server_status.serverSettings.tags.join("<br />") );
       if ( window.server_status.control_status != "Running") {
+         $("#factorioStart").hide();
+         $("#factorioLoad").hide();
+         $("#factorioStop").hide();
+         $("#factorioRestart").hide();
+         $("#factorioUpdate").hide();
+         $("#factorioSave").hide();
+	 $("#descriptionBox").hide();
          $("#help-StartTMux").show();
-         $("#help-StartTMux xmp").load("help.php?topic=tmux");
-         $("#serverControl ul").hide();
+	 $("#help-StartTMux xmp").load("help.php?topic=tmux"); 
+	 $("#scriptRestart").show(); 
       } else {
          $("#help-StartTMux").hide();
          $("#serverControl ul").show();
-
+	 $("#scriptRestart").hide();
          if ( window.server_status.factorio_status == "Running" ) {
-			$("#factorioStart").hide();
+	    $("#factorioStart").hide();
             $("#factorioLoad").show();
             $("#factorioStop").show();
             $("#factorioRestart").show();
@@ -320,6 +331,7 @@ if (!$validated) {
          	<dd id="factorioTags"></dd>
       	</dl>
       	<ul>
+		<li id="scriptRestart"><a href="send-control.php?control=restart_script" class="btn btn-custom btn-large btn-block">Start Script</a></li>
         	<li id="factorioStart"><a href="send-control.php?control=start" class="btn btn-custom btn-large btn-block">Start</a></li>
         	<li id="factorioStop"><a href="send-control.php?control=stop" class="btn btn-custom btn-large btn-block">Stop</a></li>
        		<li id="factorioRestart"><a href="send-control.php?control=restart" class="btn btn-custom btn-large btn-block">Restart</a></li>
@@ -329,6 +341,7 @@ if (!$validated) {
       	</ul>
       	<form id="upload_form" action="upload.php" method="post" enctype="multipart/form-data">
          	<input id="upload_select" type="file" name="fileToUpload" />
+		<input id="upload_load" name="load" value="true"/>
         	<input type="submit" value="Upload Image" name="submit" id="btnUpload" />
      	</form>
 	
@@ -336,14 +349,12 @@ if (!$validated) {
         	<strong>Server control session not found. Please start the tmux using:</strong>
         	<xmp></xmp>
       	</div>
-
- 
       </div>
   
 
 
    <div id="saveSelectionWrapper"> 
-       <a class="btn btn-custom btn-small" id="upload">Upload</a> 
+      <a class="btn btn-custom btn-small" id="upload">Upload</a> 
       <a class="btn btn-custom btn-small" id="loadSel">Load</a> 
       <a class="btn btn-custom btn-small" id="renameSel">Rename</a> 
       <a class="btn btn-custom btn-small" id="moveSel">Move to archive</a> 
@@ -381,7 +392,7 @@ if (!$validated) {
      <div class="output text_box"></div>
       <form id="command_form" method="post" action="send-command.php">
          <?php print $_SERVER['PHP_AUTH_USER']; ?>: <input type="text" autocomplete="off" id="command" name="command" />
-         <input type="submit" value="Send" />
+	 <input type="submit" value="Send" />
       </form>
    </div>
 

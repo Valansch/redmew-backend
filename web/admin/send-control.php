@@ -3,6 +3,12 @@
  * control the server
  */
  
+error_reporting(E_ALL);
+ini_set('display_errors', 1);
+
+?>
+
+<?php
 if (!isset($_SERVER['PHP_AUTH_USER'])) {
 header('WWW-Authenticate: Basic realm="Redmew Admin Console"');
 header('HTTP/1.0 401 Unauthorized');
@@ -25,6 +31,8 @@ if (  ! empty( $control ) ) {
       case "save":
          $Server->serverControl( $control );
          break;
+      case "restart_script": 
+      	 exec('echo restart > /home/factorio/server/restart');
       default:
    }
 

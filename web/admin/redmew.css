@@ -56,7 +56,6 @@ padding-right:25px;
 
 #saveSelection {
 	overflow: auto;
-	font-size: 2vh;
 	max-height: 375px;
 	overflow-y: scroll;
 	padding: 0px;
@@ -138,8 +137,13 @@ dd {
    background: transparent !important;
    color: #999 !important;
 }
+
+#command_form {
+	overflow:hidden;
+}
 #command  {
-   width: 90%;
+   clear: both;
+   width: 85%;
    background: #000;
    color: #999;
    line-height: 1.5em;
@@ -147,7 +151,9 @@ dd {
    padding: 4px;
    margin: 2px;
 }
+
 input[type=submit] {
+   clear: both;
    background: #000;
    color: #999;
    margin: 0;
