@@ -90,8 +90,9 @@ if (!$validated) {
          href = $(this).attr("href");
          $("#dummy_output").load(href);
          $("#serverControl ul a").addClass("wait");
+         $("#saveSelectionWrapper #loadSel").addClass("wait");
 
-         window.clearTimeout(serverControlTimeout);
+	window.clearTimeout(serverControlTimeout);
          serverControlTimeout = window.setTimeout(reloadStatus, timePollControl);
 
       });
@@ -117,13 +118,46 @@ if (!$validated) {
 
       $("#deleteSel").click(function (e){
      	if (confirm("Do you really want to delete " + saves[selectedSave]["name"] + "?")){
-	
+	  send_command(":fo rm " + saves[selectedSave]["name"]);	
 	}
+      });
+
+      $("#moveSel").click(function (e){
+     	if (confirm("Do you really want to archive " + saves[selectedSave]["name"] + "?")){
+	  send_command(":fo mv " + saves[selectedSave]["name"] + " archive/" + saves[selectedSave]["name"]);	
+	}
+      });
+
+      $("#loadSel").click(function (e){
+     	if (confirm("Do you really want to load " + saves[selectedSave]["name"] + "?")){
+           send_command(":loadsave saves/" + saves[selectedSave]["name"])	
+	}
+      });
+
+      $("#renameSel").click(function (e){
+     	var newname = prompt("Choose a new name for " + saves[selectedSave]["name"])
+	if (newname && newname.trim() != "")
+	  send_command(":fo mv " + saves[selectedSave]["name"] + " " +  newname);	
       });
    });
 
+   function send_command(command) {
+       $.ajax({
+           type: "POST",
+           url: "send-command.php",
+           data: { command : command},
+	   success: function(e) {
+	   	if (e.trim() != "") {
+	   		alert(e);
+		}
+	        reloadSaveSelection();	
+	   }
+         });
+   }
+
    function serverControlButtonEnable() {
       $("#serverControl ul a").removeClass("wait");
+      $("#saveSelectionWrapper #loadSel").removeClass("wait");
    }
    function loadDescription() {
       $.getJSON("status.php", function (json) {
@@ -160,6 +194,13 @@ if (!$validated) {
          serverConsoleTimeout = window.setTimeout(reloadConsole, timePollConsole);
       });
 
+   }
+
+   function reloadSaveSelection(){
+   	saves = {};
+   	selectedSave = null;
+	$("#saveSelectionBody").empty();
+	lsSaves(lastSortKey, true);
    }
 
    function tdn(n) {
@@ -208,8 +249,11 @@ if (!$validated) {
    sortKeyReversed["name"] = true;
    sortKeyReversed["timestamp"] = true;
    sortKeyReversed["size"] = true;
-   function lsSaves(sortKey) {
-      sortKeyReversed[sortKey] = !sortKeyReversed[sortKey];
+   lastSortKey = "";
+   function lsSaves(sortKey, dontReverse) {
+      lastSortKey = sortKey;
+      if (!dontReverse)
+      	sortKeyReversed[sortKey] = !sortKeyReversed[sortKey];
       $.get("saves-ls.php", function (data) { 
 	var savesJson = JSON.parse(data);
 	saves = sortByKey(savesJson, sortKey, sortKeyReversed[sortKey]);
@@ -299,10 +343,11 @@ if (!$validated) {
 
 
    <div id="saveSelectionWrapper"> 
-      <a class="btn btn-custom btn-small" id="deleteSel" >Delete</a> 
+       <a class="btn btn-custom btn-small" id="upload">Upload</a> 
       <a class="btn btn-custom btn-small" id="loadSel">Load</a> 
       <a class="btn btn-custom btn-small" id="renameSel">Rename</a> 
       <a class="btn btn-custom btn-small" id="moveSel">Move to archive</a> 
+      <a class="btn btn-custom btn-small" id="deleteSel" >Delete</a> 
       <div id="saveSelection" class="text_box">
          <table>
 	 	<thead><tr>

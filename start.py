@@ -85,7 +85,7 @@ def change_state_stopped():
         if select.select([mySocket], [], [], 0.1)[0]:
             (data, _) = mySocket.recvfrom(16384)
             line = data.decode('UTF-8')
-            if line[0] == ":":
+            if len(line) > 1 and line[0] == ":":
                 parse_and_execute(line[1:], None)
 
 def restart():
@@ -128,6 +128,26 @@ def load_scenario():
     start()
     sys.exit(0)
 
+def fileop(command):
+    if (command.find("rm") == 0):
+        try:
+            os.remove(os.path.join("./saves/", command[2:].strip()))
+        except Exception as e:
+            log(e)
+    elif(command.find("mv") == 0):
+        params = command.split()
+        if len(params) == 3:
+            file1 = os.path.join("./saves", params[1])
+            file2 = os.path.join("./saves", params[2])
+            try:
+                os.rename(file1, file2)
+                log("mv " + file1 + " " + file2 + ": success.")
+            except Exception as e:
+                log(e) 
+        else:
+            log("Wrong number of arguments to: mv")
+    else:
+        log("Unsupported file operation: " + command)
 def parse_and_execute(command, shell):
     log("Received command " + command)
     command = command.rstrip("\n")
@@ -149,6 +169,8 @@ def parse_and_execute(command, shell):
         load_scenario()
     elif command.find("loadsave") == 0:
         load_save(command[8:])
+    elif command.find("fo") == 0:
+        fileop(command[2:].strip())
     elif command == "restart":
         restart()
     elif command == "update":
