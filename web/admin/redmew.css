@@ -2,6 +2,7 @@
 
 body {
    padding: 10px;
+
 }
 
 #serverControl ul {
@@ -15,20 +16,87 @@ body {
 }
 
 #serverControl li a {
-   width: 100px;
-   margin: 4px;
+   width: 100px; 
+   margin: 5px;
 }
 
 div {
-   clear: both;
+  clear: both;
+}
+
+#serverControl {
+float: left;
+padding-right:25px;
+}
+
+#description {
+	max-width: 530px;
 
 }
+#saveSelectionWrapper {
+	-webkit-touch-callout: none;
+	-webkit-user-select: none;
+	-khtml-user-select: none;
+	-moz-user-select: none;
+	-ms-user-select: none; 
+	user-select: none;
+	margin: 25px;
+	margin-left:0px;
+	overflow: hidden;
+	margin-bottom: -110px;
+	float: left;
+	clear: right;
+}
+/* Smartphones */
+@media only screen and (max-width: 1168px) {
+	#saveSelectionWrapper {
+		margin-bottom: 25px !important;
+	}
+} 
+
+#saveSelection {
+	overflow: auto;
+	font-size: 2vh;
+	max-height: 375px;
+	overflow-y: scroll;
+	padding: 0px;
+}
+
+td {
+  padding-left: 25px;
+  padding-right: 25px;
+}
+
+th {
+	cursor: pointer;
+}
+
+.tblRow:hover {
+	cursor:pointer;	
+	background-color: #db6021;
+}
+
+.btn-small {
+	margin-bottom: 5px;
+}
+
+.active {
+	cursor:pointer;	
+	background-color: #af4d1b !important;
+}
+
+
+.tblRow:active {
+	cursor:pointer;	
+	background-color: #af4d1b;
+}
+
+
 
 .text_box {
    border: 1px solid #999;
    padding: 10px;
    overflow-x: scroll;
-   white-space: nowrap;
    background: #000;
 }
 
