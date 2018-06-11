@@ -237,15 +237,23 @@ if (!$validated) {
 	console.log(saves[id]["name"]);
    }
 
-	function sortByKey(a, key, reverse) {
-		return a.sort(function(a, b) {
-			var x = a[key]; var y = b[key];
-			if (reverse)
-				return ((x > y) ? -1 : ((x < y) ? 1 : 0));
-			else
-				return ((x < y) ? -1 : ((x > y) ? 1 : 0));
-		});
-	}
+   function sortByKey(a, key, reverse) {
+      return a.sort(function(a, b) {
+         var x = a[key]; var y = b[key];
+         if (reverse)
+            return ((x > y) ? -1 : ((x < y) ? 1 : 0));
+         else
+            return ((x < y) ? -1 : ((x > y) ? 1 : 0));
+         });
+   }
+
+   function formatSize(size) {
+	size = Math.floor(size / 104857.6 + 0.5) / 10;
+	let subonesize = size - Math.floor(size);
+	if (subonesize < (0.099))
+		return size + ".0 MB";
+	return size + " MB";
+   }
 
    saves = {};
    selectedSave = null;
@@ -263,9 +271,9 @@ if (!$validated) {
 	saves = sortByKey(savesJson, sortKey, sortKeyReversed[sortKey]);
 	$("#saveSelectionBody").empty();
 	for(let i = 0; i < saves.length; i++) {
-	   let size = Math.floor(saves[i]["size"] / 10485.76) / 100 + "MB";
+	   let size = formatSize(saves[i]["size"]);
 	   let time = formatTime(new Date(saves[i]["timestamp"] * 1000)); 
-	   $("#saveSelectionBody").append('<tr class="tblRow" id="row' + i + '" onclick="rowClick(' + i + ')"><td>' + saves[i]["name"] + '</td><td>' + size + '</td><td>' + time + '</td></tr>');
+	   $("#saveSelectionBody").append('<tr class="tblRow pull" id="row' + i + '" onclick="rowClick(' + i + ')"><td>' + saves[i]["name"] + '</td><td class="pull-right">' + size + '</td><td>' + time + '</td></tr>');
 	}
       });
    }

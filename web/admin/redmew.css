@@ -55,10 +55,15 @@ padding-right:25px;
 } 
 
 #saveSelection {
+	font-size: 100px !important;
 	overflow: auto;
 	max-height: 375px;
 	overflow-y: scroll;
 	padding: 0px;
+}
+
+#saveSelectionBody {
+	font-size: 2vh;
 }
 
 td {
