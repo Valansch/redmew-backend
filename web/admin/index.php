@@ -215,7 +215,7 @@ if (!$validated) {
 
    function formatTime(dateTime){
       return dateTime.getFullYear() + "-" +
-      tdn(dateTime.getMonth()) + "-" +
+      tdn(dateTime.getMonth() + 1) + "-" +
       tdn(dateTime.getDate()) + " " +
       tdn(dateTime.getHours()) + ":" +
       tdn(dateTime.getMinutes()) + ":" +
@@ -248,11 +248,7 @@ if (!$validated) {
    }
 
    function formatSize(size) {
-	size = Math.floor(size / 104857.6 + 0.5) / 10;
-	let subonesize = size - Math.floor(size);
-	if (subonesize < (0.099))
-		return size + ".0 MB";
-	return size + " MB";
+	return Math.floor(size / 104857.6 + 0.5) / 10 + " MB";
    }
 
    saves = {};
@@ -372,7 +368,7 @@ if (!$validated) {
 	 	<thead><tr>
          		<th onclick="lsSaves('name')">Save File</th>
       	 		<th onclick="lsSaves('size')">Size</th>
-	 		<th onclick="lsSaves('name')">Last Modified</th>
+	 		<th onclick="lsSaves('timestamp')">Last Modified</th>
 	 	</tr><thead>
 		<tbody id="saveSelectionBody">
 		</tbody>

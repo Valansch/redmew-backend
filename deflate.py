@@ -16,7 +16,7 @@ def log(str):
 		f.write("[Save deflation] " + str + "\n")
 
 def parse_URI(line, cdir):
-    line = line.replace("(", "").replace(")"," ").replace("\"","").replace(".","/").replace("'", "")
+    line = line.replace("{","").replace("}","").replace(",","").replace("(", "").replace(")"," ").replace("\"","").replace(".","/").replace("'", "")
     line = line[(line.find("require") + 7):].strip()
     end_of_file_name = line.find(" ")
     if end_of_file_name > -1:

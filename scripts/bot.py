@@ -26,7 +26,7 @@ api_response_timeout = 3 # seconds
 channel = None
 # Init socket connection to factorio console
 server_id  = '432567222481846283'
-channel_id = '432641337834078229'
+channel_id = '432602735234252801'
 PORT = 0
 cwd = os.path.dirname(os.path.abspath(__file__)) + "/../"
 
@@ -53,6 +53,7 @@ class Command:
 			return commands.print_help()
 		if self.name == "bazul": 
 			return ":heart:"
+
 		if not admin and self.admin: raise RuntimeError("You don't have permission to run this command")	
 		if self.is_function:
 			first_fct_arg = '"api/' + str(msgid) + '",' if self.output else ","
