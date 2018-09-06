@@ -61,10 +61,13 @@ def update():
     run("./install.sh --latest", shell=True)
     log("Update finished")
 
-def stop():
+def stop(force):
+    option = ""
+    if force:
+        option = " -9 "
     if not is_stopped():
         log("Stopping server")
-        run("kill " + str(pid), shell=True)
+        run("kill " + option + str(pid), shell=True)
 
 def update_external_pid():
     global pid
@@ -89,7 +92,7 @@ def change_state_stopped():
                 parse_and_execute(line[1:], None)
 
 def restart():
-    stop()
+    stop(false)
     for x in range(10000000):
         time.sleep(1)
         if is_stopped(): break
@@ -105,7 +108,7 @@ def load_save(file):
     if not os.path.isfile(file):
         log("File does not exist.")
         return 0
-    stop()
+    stop(false)
     for x in range(10000000):
         time.sleep(1)
         if is_stopped(): break
@@ -116,8 +119,8 @@ def load_save(file):
     start()
     sys.exit(0)
 
-def load_scenario():
-    if not is_stopped(): stop()
+def load_scenario(force):
+    if not is_stopped(): stop(force)
     for x in range(10000000):
         time.sleep(1)
         if is_stopped(): break
@@ -153,10 +156,10 @@ def parse_and_execute(command, shell):
     command = command.rstrip("\n")
     if command == "":
         pass
-    elif command == "stop":
+    elif command[:4] == "stop":
         if is_stopped(): log("Server is already stopped")
         else:
-            stop()
+            stop(command.find("--force"))
             change_state_stopped()
     elif command == "start":
         if is_stopped():
@@ -165,8 +168,8 @@ def parse_and_execute(command, shell):
             cmd = load_save_cmd
             start()
         else: log("Server already running")
-    elif command == "loadscenario":
-        load_scenario()
+    elif command[:12] == "loadscenario":
+        load_scenario(command.find("--force"))
     elif command.find("loadsave") == 0:
         load_save(command[8:])
     elif command.find("fo") == 0:
@@ -174,7 +177,7 @@ def parse_and_execute(command, shell):
     elif command == "restart":
         restart()
     elif command == "update":
-        stop()
+        stop(false)
         update()
         start()
     elif command == "save":
