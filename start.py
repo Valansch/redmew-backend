@@ -61,10 +61,9 @@ def update():
     run("./install.sh --latest", shell=True)
     log("Update finished")
 
-def stop():
-    if not is_stopped():
-        log("Stopping server")
-        run("kill " + str(pid), shell=True)
+def stop(): 
+    log("Stopping server")
+    run("kill " + str(pid), shell=True)
 
 def update_external_pid():
     global pid
@@ -117,10 +116,15 @@ def load_save(file):
     sys.exit(0)
 
 def load_scenario():
-    if not is_stopped(): stop()
+    if not is_stopped(): 
+        stop()
+        log("stopping server")
+    time.sleep(5)
     for x in range(10000000):
-        time.sleep(1)
+        time.sleep(5)
         if is_stopped(): break
+        stop()
+        log("tryping again")
     log("Loading scenario RedMew")
     global start_scenario_cmd
     global cmd
@@ -153,7 +157,8 @@ def parse_and_execute(command, shell):
     command = command.rstrip("\n")
     if command == "":
         pass
-    elif command == "stop":
+    
+    elif command[:4] == "stop":
         if is_stopped(): log("Server is already stopped")
         else:
             stop()
@@ -165,7 +170,7 @@ def parse_and_execute(command, shell):
             cmd = load_save_cmd
             start()
         else: log("Server already running")
-    elif command == "loadscenario":
+    elif command.find("loadscenario") == 0:
         load_scenario()
     elif command.find("loadsave") == 0:
         load_save(command[8:])
@@ -173,6 +178,10 @@ def parse_and_execute(command, shell):
         fileop(command[2:].strip())
     elif command == "restart":
         restart()
+    elif command == "kill":
+        log("Shutting down")
+        stop()
+        sys.exit(0)
     elif command == "update":
         stop()
         update()
