@@ -10,6 +10,7 @@ import pyotp
 from time import gmtime, strftime, sleep
 
 # Open chatlog file
+
 chatlog_file = '/home/factorio/server/log/log.log'
 port_file_path = '/home/factorio/server/control_port'
 command_file_path = '/home/factorio/server/script-output/commandPipe'

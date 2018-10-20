@@ -65,6 +65,7 @@ def stop():
     log("Stopping server")
     run("kill " + str(pid), shell=True)
 
+
 def update_external_pid():
     global pid
     with open("./factorio_pid", 'w') as f:
@@ -88,7 +89,7 @@ def change_state_stopped():
                 parse_and_execute(line[1:], None)
 
 def restart():
-    stop()
+    stop(false)
     for x in range(10000000):
         time.sleep(1)
         if is_stopped(): break
@@ -104,7 +105,7 @@ def load_save(file):
     if not os.path.isfile(file):
         log("File does not exist.")
         return 0
-    stop()
+    stop(false)
     for x in range(10000000):
         time.sleep(1)
         if is_stopped(): break
@@ -157,7 +158,6 @@ def parse_and_execute(command, shell):
     command = command.rstrip("\n")
     if command == "":
         pass
-    
     elif command[:4] == "stop":
         if is_stopped(): log("Server is already stopped")
         else:
@@ -183,7 +183,7 @@ def parse_and_execute(command, shell):
         stop()
         sys.exit(0)
     elif command == "update":
-        stop()
+        stop(false)
         update()
         start()
     elif command == "save":

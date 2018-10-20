@@ -113,7 +113,6 @@ class Commands:
  
 commands = Commands()
 commands.add(Command("help", "Prints this help text"))
-commands.add(Command("bazul", ":heart:"))
 commands.add(Command("spy", "spys on a player", implemented=False, num_args=1, is_function = False))
 commands.add(Command("players", "lists all online players.", output=True))
 commands.add(Command("ban", "bans a player.", is_function=False, num_args=1 , admin=True))
@@ -122,6 +121,7 @@ commands.add(Command("kick","kicks a player.", is_function=False, num_args=1, ad
 commands.add(Command("time", "How long the server has been running.",is_function=True, output=True))
 commands.add(Command("poll", "shows current poll status.",is_function=True, output=True))
 commands.add(Command("rockets", "shows how many rockets have been launched", is_function=True, output=True));
+commands.add(Command("restart", "restarts the scenario.",is_function=True, output=False, admin=True))
 
 def print_to_file(str):
 	with open(cwd + "log/bot.log", "a") as f:
