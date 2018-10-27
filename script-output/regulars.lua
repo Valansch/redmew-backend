@@ -111,7 +111,6 @@
 ["firebunnie"] = true,
 ["fish"] = true,
 ["flowild"] = true,
-["forge36"] = true,
 ["franc_ist"] = true,
 ["fremiamagus"] = true,
 ["frissi"] = true,
@@ -742,4 +741,6 @@
 ["SaiN"] = true,
 ["Ground_walker"] = true,
 ["dog80"] = true,
+["Forge36"] = true,
+["MovingMike"] = true,
 }
