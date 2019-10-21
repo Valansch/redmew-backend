@@ -244,7 +244,7 @@ async def on_message(message):
 
 while True:
 	try:
-		client.run('MzU2NTQ2MDI5MDY5NDAyMTE0.DOCnIQ.b25HdFO_9Uz34ose41aen4Oa4AM')
+		client.run('TOKEN')
 	except ConnectionResetError:
 		pass
 	except RuntimeError:
