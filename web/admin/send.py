@@ -1,4 +1,4 @@
-#!/usr/bin/python
+#!/usr/bin/env python3
 import sys
 from socket import socket, AF_INET, SOCK_DGRAM
 
