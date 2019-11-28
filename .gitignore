@@ -4,6 +4,7 @@
 *.json
 *cfg
 __pycache__/
+.venv
 config/
 bin/
 scenarios/
