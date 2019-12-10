@@ -1,4 +1,4 @@
-#!/usr/bin/env python
+#!/usr/bin/env python3
 # vim: set noexpandtab ts=8 sw=8 sts=8 number:
 
 import socket

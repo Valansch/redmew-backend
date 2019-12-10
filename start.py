@@ -1,4 +1,4 @@
-#!/usr/bin/python
+#!/usr/bin/env python3
 from subprocess import Popen, run, PIPE, check_output
 from socket import socket, gethostbyname, AF_INET, SOCK_DGRAM
 import time
