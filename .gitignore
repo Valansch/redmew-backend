@@ -5,6 +5,7 @@
 *cfg
 __pycache__/
 .venv
+TOKEN
 config/
 bin/
 scenarios/
