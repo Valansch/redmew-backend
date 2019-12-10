@@ -242,9 +242,12 @@ async def on_message(message):
 		await client.send_message(message.channel, "Commands are only available in the " + client.get_channel(channel_id).name + " channel.")
 # Run the event loop
 
+with open("token.txt") as f:
+	TOKEN = f.read()
+
 while True:
 	try:
-		client.run('TOKEN')
+		client.run(TOKEN)
 	except ConnectionResetError:
 		pass
 	except RuntimeError:
